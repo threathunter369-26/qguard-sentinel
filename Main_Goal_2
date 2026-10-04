@@ -1,0 +1,1513 @@
+# Enterprise Web & Mobile Security Assessment, Penetration Testing & DFIR Platform
+
+## 1. Project Objective
+
+I am a Senior Security Engineer responsible for building an internal, enterprise-grade cybersecurity platform for our organization.
+
+Build a **full-stack, centralized Security Assessment, Vulnerability Management, Penetration Testing, Digital Forensics, and Incident Response platform** that enables authorized security engineers and security teams to assess, monitor, investigate, and respond to security threats affecting our organization's:
+
+- Web applications
+- Mobile applications
+- APIs
+- Internal applications
+- Servers and infrastructure
+- Cloud environments
+- Networks
+- Databases
+- Containers
+- Source code
+- Dependencies and software supply chain
+- Authentication and identity systems
+- Cryptographic implementations
+- Endpoints and digital evidence
+
+The platform must be designed specifically for **authorized internal security testing and defensive cybersecurity operations**.
+
+The final product should be **Premium, Enterprise Grade, Secure by Design, Modular, Scalable, User Friendly, and Production Ready**.
+
+Do not build this as a simple vulnerability scanner or dashboard. Build it as a **unified security engineering and DFIR platform** with a strong foundation that can be expanded with additional security engines and integrations in the future.
+
+---
+
+# 2. Primary Goals
+
+The platform must provide a centralized workspace for:
+
+1. Security Asset Discovery
+2. Web Application Security Testing
+3. Mobile Application Security Testing
+4. API Security Testing
+5. Vulnerability Assessment
+6. SAST
+7. DAST
+8. Dependency/SCA Analysis
+9. Secrets Detection
+10. Container Security
+11. Infrastructure Security Assessment
+12. Network Security Assessment
+13. Cryptographic Security Assessment
+14. Quantum-Vulnerability / Post-Quantum Cryptography Assessment
+15. Penetration Testing Management
+16. Vulnerability Management
+17. Risk Management
+18. Digital Forensics
+19. Incident Response
+20. Threat Intelligence
+21. Security Evidence Management
+22. Security Case Management
+23. Security Reporting
+24. Compliance Mapping
+25. Security Analytics
+26. Security Executive Dashboard
+
+All modules must ultimately feed into a **centralized security data and risk model** so that findings are correlated instead of duplicated across different scanners.
+
+---
+
+# 3. Technology Stack
+
+Use the following primary technology stack.
+
+## Frontend
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Modern CSS
+- shadcn/ui or equivalent enterprise-grade component system
+- Responsive design
+- Dark and Light themes
+- Accessible UI
+- Modern data visualization
+- Interactive security dashboards
+
+Use the **Next.js App Router** and modern React architecture.
+
+Prefer reusable components and strongly typed interfaces throughout the application.
+
+---
+
+# 4. Backend
+
+Use:
+
+- FastAPI
+- Python
+- Pydantic
+- Async architecture where appropriate
+- REST APIs
+- WebSocket/SSE capabilities for real-time security operations
+- Background workers for long-running scans and forensic processing
+- Proper task/job management
+
+The backend must be modular.
+
+Do NOT create one giant FastAPI application.
+
+Organize the backend into logical services/modules such as:
+
+```text
+backend/
+├── api/
+├── auth/
+├── assets/
+├── scanning/
+├── vulnerabilities/
+├── sast/
+├── dast/
+├── mobile/
+├── api_security/
+├── crypto/
+├── threat_intelligence/
+├── pentest/
+├── risk/
+├── dfir/
+├── incidents/
+├── evidence/
+├── cases/
+├── reports/
+├── compliance/
+├── notifications/
+├── audit/
+├── workers/
+└── common/
+```
+
+---
+
+# 5. Database
+
+Use:
+
+- PostgreSQL
+- Supabase
+- Proper relational data modeling
+- Row Level Security where applicable
+- Database migrations
+- Foreign-key relationships
+- Indexing
+- Audit trails
+- Data retention policies
+
+Supabase should primarily provide:
+
+- Authentication
+- User management
+- Session management
+- Database integration where appropriate
+- Storage where appropriate
+- Realtime functionality where appropriate
+
+Do not place sensitive security logic exclusively in the frontend.
+
+All sensitive operations must be validated server-side.
+
+---
+
+# 6. Authentication & Authorization
+
+Implement enterprise-grade authentication and authorization.
+
+Support:
+
+- Email/password authentication
+- MFA-ready architecture
+- Session management
+- Role-Based Access Control
+- Fine-grained permissions
+- User roles
+- Team/organization management
+- Project-based access control
+- Security engineer roles
+- Analyst roles
+- Incident responder roles
+- DFIR investigator roles
+- Administrator roles
+- Read-only/auditor roles
+
+Example:
+
+```text
+Organization
+   ├── Teams
+   │    ├── Security Engineering
+   │    ├── SOC
+   │    ├── DFIR
+   │    └── Development
+   │
+   └── Projects
+        ├── Web Applications
+        ├── Mobile Applications
+        ├── APIs
+        └── Infrastructure
+```
+
+Every sensitive action must be auditable.
+
+---
+
+# 7. Core Platform Modules
+
+## 7.1 Security Operations Dashboard
+
+Create a premium executive and security-engineering dashboard.
+
+Display:
+
+- Total Assets
+- Web Applications
+- Mobile Applications
+- APIs
+- Servers
+- Cloud Assets
+- Critical Vulnerabilities
+- High Vulnerabilities
+- Medium Vulnerabilities
+- Low Vulnerabilities
+- Exploitable Findings
+- Open Security Cases
+- Active Incidents
+- Security Risk Score
+- Security Posture
+- Compliance Posture
+- Recent Security Events
+- Recent Scan Activity
+- Recent Incidents
+- Threat Intelligence
+- Remediation Progress
+
+Use real database-backed information.
+
+### IMPORTANT
+
+Do not use:
+
+- Random metrics
+- Fake statistics
+- Hardcoded vulnerability counts
+- Mock security findings
+- Artificial risk scores
+
+Production dashboards must derive metrics from actual platform data.
+
+---
+
+# 8. Asset Discovery & Inventory
+
+Build a centralized Asset Inventory.
+
+Support:
+
+- Domains
+- Subdomains
+- IP addresses
+- URLs
+- Web applications
+- APIs
+- Mobile applications
+- Servers
+- Databases
+- Cloud resources
+- Containers
+- Kubernetes resources
+- Certificates
+- Cryptographic keys
+- Repositories
+- Dependencies
+- Endpoints
+
+Each asset should have:
+
+- Asset ID
+- Name
+- Type
+- Owner
+- Environment
+- Criticality
+- Business value
+- Technology stack
+- Operating system
+- IP/hostname
+- Domain
+- Tags
+- Related vulnerabilities
+- Related findings
+- Security score
+- Last assessment
+- Assessment history
+
+---
+
+# 9. Web Application Security
+
+Build a comprehensive authorized web security assessment module.
+
+Include:
+
+### Discovery
+
+- Domain discovery
+- Subdomain discovery
+- URL discovery
+- Endpoint discovery
+- Technology fingerprinting
+- HTTP headers
+- TLS configuration
+- Certificate inspection
+- DNS security
+- Security headers
+- Cookie analysis
+
+### Security Testing
+
+Include defensive detection and assessment capabilities covering areas such as:
+
+- OWASP Top 10
+- Authentication weaknesses
+- Authorization issues
+- Session management
+- Input validation
+- Injection vulnerabilities
+- XSS
+- SSRF
+- CSRF
+- Security misconfiguration
+- File handling issues
+- Access-control issues
+- API security issues
+- Sensitive information exposure
+- Cryptographic weaknesses
+
+Findings must include evidence and reproducible validation information appropriate for authorized testing.
+
+---
+
+# 10. Mobile Application Security
+
+Create a dedicated Android/iOS security assessment module.
+
+Support analysis of:
+
+- APK
+- AAB
+- IPA where supported
+- Application metadata
+- Permissions
+- Certificates
+- Signing configuration
+- Embedded secrets
+- Hardcoded credentials
+- URLs
+- API endpoints
+- Cryptographic implementations
+- Weak algorithms
+- Insecure storage
+- Network security configuration
+- TLS configuration
+- Root/jailbreak controls
+- Debug configuration
+- Exported components
+- Android manifest
+- Dependencies
+- Third-party SDKs
+- Privacy/security configuration
+
+Map findings to relevant mobile security frameworks such as:
+
+- OWASP MASVS
+- OWASP MASTG
+
+---
+
+# 11. API Security
+
+Build an API Security module supporting:
+
+- REST APIs
+- GraphQL
+- WebSockets where applicable
+- OpenAPI specifications
+- Authentication analysis
+- Authorization testing
+- Rate-limit assessment
+- Input validation
+- Schema validation
+- API inventory
+- Endpoint discovery
+- Security configuration
+- Sensitive data exposure
+
+Support importing OpenAPI specifications.
+
+---
+
+# 12. SAST
+
+Build a Static Application Security Testing module.
+
+Support analysis of:
+
+- JavaScript
+- TypeScript
+- Python
+- Java
+- Kotlin
+- Swift
+- Go
+- C/C++
+- PHP
+- C#
+- Additional languages through pluggable analyzers
+
+Detect:
+
+- Vulnerable coding patterns
+- Injection
+- Authentication weaknesses
+- Authorization problems
+- Secrets
+- Insecure cryptography
+- Dangerous APIs
+- Command execution risks
+- Path traversal
+- Unsafe deserialization
+- Security misconfiguration
+- Dependency risks
+
+Provide:
+
+- File
+- Line number
+- Code location
+- Severity
+- CWE
+- OWASP mapping
+- Evidence
+- Explanation
+- Remediation guidance
+
+---
+
+# 13. SCA / Dependency Security
+
+Implement Software Composition Analysis.
+
+Detect:
+
+- Vulnerable dependencies
+- Outdated dependencies
+- Known CVEs
+- Transitive dependencies
+- License information
+- Dependency risk
+- Supply-chain risks
+
+Support common ecosystem formats.
+
+---
+
+# 14. Secrets Detection
+
+Detect exposed:
+
+- API keys
+- Tokens
+- Passwords
+- Private keys
+- Cloud credentials
+- Database credentials
+- JWT secrets
+- Certificates
+- Configuration secrets
+
+Provide:
+
+- Detection source
+- File/location
+- Secret type
+- Exposure severity
+- Validation status
+- Remediation recommendation
+
+Never expose actual secrets unnecessarily in the UI or logs.
+
+---
+
+# 15. Container & Cloud Security
+
+Include assessment capabilities for:
+
+### Containers
+
+- Dockerfiles
+- Container images
+- Package vulnerabilities
+- Misconfigurations
+- Secrets
+- Privilege issues
+- Base image vulnerabilities
+
+### Kubernetes
+
+- RBAC
+- Network policies
+- Pod security
+- Secrets
+- Service accounts
+- Exposed services
+- Misconfiguration
+
+### Cloud
+
+Architect the platform to support future integrations with:
+
+- AWS
+- Azure
+- Google Cloud
+
+Use provider-specific adapters rather than tightly coupling the entire application to one cloud.
+
+---
+
+# 16. Cryptographic Security & Quantum Readiness
+
+Create a dedicated Cryptographic Security module.
+
+Detect and inventory:
+
+- RSA
+- ECC
+- DH
+- ECDH
+- ECDSA
+- Ed25519
+- TLS configurations
+- SSH algorithms
+- Certificates
+- Weak hashes
+- Weak ciphers
+- Legacy cryptography
+
+Identify:
+
+- Algorithm
+- Key size
+- Usage
+- Protocol
+- Certificate
+- Asset
+- Risk
+- Recommended migration
+
+Also provide a **Post-Quantum Cryptography readiness assessment**.
+
+Support detection and inventory of:
+
+- ML-KEM
+- ML-DSA
+- SLH-DSA
+- Hybrid cryptography
+- X25519 + ML-KEM
+- TLS 1.3 PQ/hybrid configurations
+
+Do not incorrectly classify ML-KEM as a signature algorithm or ML-DSA as an encryption/KEM algorithm.
+
+Maintain a clear distinction between:
+
+```text
+Key Encapsulation
+├── ML-KEM
+
+Digital Signatures
+├── ML-DSA
+└── SLH-DSA
+
+Symmetric Encryption
+├── AES-256-GCM
+
+Hashing
+├── SHA-256
+└── SHA-3
+```
+
+---
+
+# 17. Vulnerability Management
+
+Create a centralized vulnerability management platform.
+
+Every finding must have:
+
+- Unique Finding ID
+- Asset
+- Source
+- Scanner
+- Severity
+- CVE
+- CWE
+- CVSS
+- Evidence
+- First Seen
+- Last Seen
+- Status
+- Assigned Owner
+- Remediation
+- Verification status
+
+Statuses:
+
+```text
+Open
+Confirmed
+False Positive
+Accepted Risk
+In Progress
+Resolved
+Verified
+Reopened
+```
+
+Implement deduplication and correlation so the same underlying vulnerability detected by multiple engines does not appear as multiple unrelated vulnerabilities.
+
+---
+
+# 18. Risk Management
+
+Create a centralized risk engine.
+
+Risk calculations should consider:
+
+- Severity
+- Exploitability
+- Asset criticality
+- Business impact
+- Exposure
+- Internet accessibility
+- Authentication requirements
+- Data sensitivity
+- Exploit availability
+- Threat intelligence
+- Compensating controls
+
+Clearly show how a risk score was calculated.
+
+Never hide the underlying factors.
+
+---
+
+# 19. Penetration Testing Management
+
+Create a professional penetration-testing workspace.
+
+Support:
+
+- Engagement creation
+- Scope definition
+- Rules of engagement
+- Target management
+- Testing phases
+- Findings
+- Evidence
+- Notes
+- Screenshots
+- Proof-of-concept documentation
+- Remediation tracking
+- Retesting
+- Final report
+
+Maintain strict separation between authorized testing scope and out-of-scope assets.
+
+---
+
+# 20. Digital Forensics
+
+Build a dedicated DFIR workspace.
+
+Support evidence management for:
+
+- Files
+- Disk images
+- Memory captures
+- Logs
+- Network captures
+- Browser artifacts
+- System artifacts
+- Mobile artifacts
+- Cloud artifacts
+- Authentication logs
+
+Implement:
+
+- Evidence ingestion
+- Evidence hashing
+- Chain of custody
+- Evidence metadata
+- Investigator notes
+- Timeline analysis
+- Artifact analysis
+- File analysis
+- IOC extraction
+
+Use cryptographic hashes to maintain evidence integrity.
+
+---
+
+# 21. Incident Response
+
+Create a complete Incident Response module.
+
+Support:
+
+```text
+Detection
+    ↓
+Triage
+    ↓
+Investigation
+    ↓
+Containment
+    ↓
+Eradication
+    ↓
+Recovery
+    ↓
+Lessons Learned
+```
+
+Each incident should include:
+
+- Incident ID
+- Severity
+- Status
+- Timeline
+- Affected assets
+- Indicators of compromise
+- Evidence
+- Investigators
+- Tasks
+- Communications
+- Findings
+- Root-cause analysis
+- Remediation
+- Recovery actions
+
+---
+
+# 22. Threat Intelligence
+
+Build a threat-intelligence framework.
+
+Support:
+
+- IOC management
+- IP addresses
+- Domains
+- URLs
+- Hashes
+- Malware indicators
+- CVEs
+- Threat actors
+- Campaigns
+- TTPs
+
+Map intelligence to:
+
+- MITRE ATT&CK
+- CVE
+- CWE
+- CAPEC
+- OWASP
+
+Design the architecture so external threat-intelligence feeds can be integrated later.
+
+---
+
+# 23. Security Evidence & Chain of Custody
+
+Evidence must have:
+
+- Evidence ID
+- SHA-256 hash
+- Collection time
+- Collector
+- Source
+- Original filename
+- MIME type
+- Size
+- Case ID
+- Custodian
+- Access history
+- Integrity verification
+
+All evidence access must be audited.
+
+---
+
+# 24. Reporting
+
+Build an enterprise-grade reporting engine.
+
+Reports should support:
+
+- Executive Report
+- Technical Security Report
+- Vulnerability Report
+- Penetration Test Report
+- Mobile Security Report
+- Web Security Report
+- API Security Report
+- DFIR Report
+- Incident Report
+- Compliance Report
+- Cryptographic Assessment
+- Quantum Readiness Report
+
+Export formats:
+
+- PDF
+- DOCX
+- JSON
+- CSV
+
+Reports must contain actual assessment data.
+
+---
+
+# 25. Compliance & Framework Mapping
+
+Build a framework mapping engine supporting future extensibility.
+
+Initial architecture should support mappings to:
+
+- OWASP
+- OWASP ASVS
+- OWASP MASVS
+- OWASP MASTG
+- CWE
+- CVE
+- CVSS
+- MITRE ATT&CK
+- NIST CSF
+- NIST SP 800-53
+- NIST SP 800-61
+- NIST SP 800-218
+- CIS Controls
+- ISO 27001
+
+Do not hardcode the entire framework logic into individual scanners.
+
+Create a reusable control/mapping architecture.
+
+---
+
+# 26. Security Operations & Audit Logging
+
+Every important action must generate an audit event.
+
+Track:
+
+- User
+- Timestamp
+- IP/device metadata where appropriate
+- Action
+- Resource
+- Previous state
+- New state
+- Result
+
+Examples:
+
+```text
+LOGIN
+LOGOUT
+SCAN_STARTED
+SCAN_COMPLETED
+FINDING_CREATED
+FINDING_UPDATED
+EVIDENCE_UPLOADED
+CASE_CREATED
+CASE_UPDATED
+REPORT_GENERATED
+ASSET_ADDED
+ASSET_REMOVED
+PERMISSION_CHANGED
+```
+
+Audit logs must be tamper-resistant and access controlled.
+
+---
+
+# 27. Premium Dashboard UX/UI
+
+The interface must look like a **modern enterprise cybersecurity platform**, not a generic admin dashboard.
+
+Design characteristics:
+
+- Premium
+- Professional
+- Clean
+- Technical
+- Modern
+- Responsive
+- Information-dense without becoming confusing
+- Excellent typography
+- Strong visual hierarchy
+- Intuitive navigation
+- Accessible
+- Fast
+
+Provide:
+
+### Main Navigation
+
+```text
+Security Overview
+Assets
+Web Security
+Mobile Security
+API Security
+SAST
+SCA
+Secrets
+Infrastructure
+Cloud Security
+Cryptography
+Quantum Security
+Vulnerabilities
+Risk
+Penetration Testing
+DFIR
+Incidents
+Threat Intelligence
+Evidence
+Compliance
+Reports
+Administration
+```
+
+Use:
+
+- Interactive charts
+- Risk heatmaps
+- Security timelines
+- Attack-surface visualization
+- Finding tables
+- Filters
+- Search
+- Sorting
+- Pagination
+- Drill-down views
+- Asset relationships
+- Finding relationships
+
+---
+
+# 28. Real-Time Security Operations
+
+Implement real-time status updates using:
+
+- WebSockets
+- SSE
+- Event-driven architecture where appropriate
+
+Users should see:
+
+- Scan progress
+- Scanner status
+- Job status
+- Incident updates
+- Finding updates
+- Evidence processing
+- Report generation
+
+Avoid unnecessary polling.
+
+---
+
+# 29. Scanning Architecture
+
+All security scanners should use a modular architecture.
+
+Example:
+
+```text
+Scanner Orchestrator
+        |
+        +-- Web Scanner
+        +-- API Scanner
+        +-- Mobile Scanner
+        +-- SAST Scanner
+        +-- SCA Scanner
+        +-- Secrets Scanner
+        +-- Container Scanner
+        +-- Cloud Scanner
+        +-- Crypto Scanner
+        +-- Network Scanner
+        +-- Certificate Scanner
+        +-- Configuration Scanner
+```
+
+Each scanner should produce normalized findings.
+
+Example normalized structure:
+
+```json
+{
+  "finding_id": "...",
+  "asset_id": "...",
+  "source": "...",
+  "category": "...",
+  "severity": "...",
+  "title": "...",
+  "description": "...",
+  "evidence": "...",
+  "cve": "...",
+  "cwe": "...",
+  "cvss": 0,
+  "remediation": "...",
+  "first_seen": "...",
+  "last_seen": "..."
+}
+```
+
+---
+
+# 30. Job & Worker Architecture
+
+Long-running tasks must not block FastAPI requests.
+
+Create a background job architecture for:
+
+- Scans
+- SAST analysis
+- Mobile analysis
+- Large file processing
+- Evidence processing
+- Report generation
+- Threat intelligence ingestion
+- Correlation
+- Risk calculation
+
+Jobs should have:
+
+```text
+Queued
+Running
+Completed
+Failed
+Cancelled
+```
+
+Provide retry handling and failure visibility.
+
+---
+
+# 31. Security Requirements
+
+The platform itself must be hardened.
+
+Implement:
+
+- Secure authentication
+- Authorization
+- Input validation
+- Output encoding
+- CSRF protection where applicable
+- Rate limiting
+- Secure headers
+- CORS policy
+- Secure cookies
+- Secrets management
+- Encryption in transit
+- Encryption at rest
+- SQL injection protection
+- SSRF protections
+- File-upload security
+- Path traversal protection
+- Command execution isolation
+- Sandboxing for risky analysis workloads
+- Secure logging
+- Dependency scanning
+
+Never execute untrusted uploaded content directly inside the main API process.
+
+---
+
+# 32. Architecture Principles
+
+Follow these principles:
+
+### Security by Design
+
+Security must be part of the architecture rather than an afterthought.
+
+### Zero Trust
+
+Never implicitly trust users, services, scanners, or uploaded artifacts.
+
+### Least Privilege
+
+Every service and user should receive only the permissions required.
+
+### Modular Architecture
+
+Every security engine should be independently replaceable or upgradeable.
+
+### Single Source of Truth
+
+Avoid duplicate or contradictory security metrics.
+
+### Evidence-Based Findings
+
+Security findings must be backed by evidence.
+
+### No Fake Data
+
+Do not generate fake vulnerabilities, metrics, scan results, or risk scores to make the UI look populated.
+
+For development, clearly separate:
+
+```text
+Mock/Test Data
+```
+
+from:
+
+```text
+Production Data
+```
+
+---
+
+# 33. Project Structure
+
+Create a maintainable monorepo architecture similar to:
+
+```text
+security-platform/
+│
+├── apps/
+│   └── web/
+│
+├── services/
+│   ├── api/
+│   ├── scanner/
+│   ├── workers/
+│   ├── dfir/
+│   ├── threat-intelligence/
+│   └── reporting/
+│
+├── packages/
+│   ├── ui/
+│   ├── types/
+│   ├── security-models/
+│   ├── scanner-sdk/
+│   └── config/
+│
+├── infrastructure/
+│   ├── docker/
+│   ├── database/
+│   └── deployment/
+│
+├── docs/
+│
+└── tests/
+```
+
+Adjust the structure when necessary, but preserve clear separation of responsibilities.
+
+---
+
+# 34. API Design
+
+Create properly versioned APIs.
+
+Example:
+
+```text
+/api/v1/auth
+/api/v1/assets
+/api/v1/scans
+/api/v1/findings
+/api/v1/vulnerabilities
+/api/v1/sast
+/api/v1/mobile
+/api/v1/api-security
+/api/v1/crypto
+/api/v1/pentest
+/api/v1/dfir
+/api/v1/incidents
+/api/v1/evidence
+/api/v1/threat-intelligence
+/api/v1/compliance
+/api/v1/reports
+/api/v1/audit
+```
+
+Use:
+
+- OpenAPI
+- Pydantic schemas
+- Consistent error responses
+- Request validation
+- Authentication middleware
+- Authorization middleware
+- API versioning
+
+---
+
+# 35. Testing
+
+Implement comprehensive testing.
+
+### Frontend
+
+- Unit tests
+- Component tests
+- Integration tests
+- E2E tests
+
+### Backend
+
+- Unit tests
+- API tests
+- Authentication tests
+- Authorization tests
+- Database tests
+- Scanner tests
+
+### Security
+
+Test for:
+
+- SQL injection
+- XSS
+- CSRF
+- SSRF
+- IDOR
+- Authentication bypass
+- Authorization bypass
+- File upload vulnerabilities
+- Path traversal
+- Command injection
+- Rate-limit bypass
+- Tenant isolation issues
+
+---
+
+# 36. Multi-Tenant Architecture
+
+Design the platform so it can eventually support multiple organizations securely.
+
+Tenant isolation must apply to:
+
+- Users
+- Assets
+- Findings
+- Scans
+- Evidence
+- Cases
+- Reports
+- Threat intelligence
+- Audit logs
+
+No tenant should ever be able to access another tenant's data.
+
+Use PostgreSQL/Supabase RLS and backend authorization together where appropriate.
+
+---
+
+# 37. Production Readiness
+
+The final architecture must be suitable for production deployment.
+
+Include:
+
+- Environment configuration
+- Secrets management
+- Database migrations
+- Structured logging
+- Error handling
+- Monitoring
+- Health checks
+- Metrics
+- Backup strategy
+- Disaster recovery considerations
+- Secure deployment configuration
+- CI/CD readiness
+- Containerization
+- Horizontal scaling considerations
+
+Do not create architecture that requires rewriting the application when moving from MVP to enterprise production.
+
+---
+
+# 38. Performance
+
+Design for large environments.
+
+The architecture should eventually support:
+
+```text
+Thousands of users
+Hundreds of thousands of assets
+Millions of findings
+Large forensic evidence collections
+Long-running security scans
+Concurrent security assessments
+Large source-code repositories
+Large mobile application packages
+```
+
+Use:
+
+- Pagination
+- Lazy loading
+- Background jobs
+- Database indexing
+- Caching where appropriate
+- Streaming where appropriate
+- Async processing
+- Efficient queries
+
+---
+
+# 39. Developer Experience
+
+Provide:
+
+- `.env.example`
+- Database migrations
+- Seed scripts for development only
+- API documentation
+- Architecture documentation
+- Setup documentation
+- Security documentation
+- Deployment documentation
+- Troubleshooting documentation
+- Developer onboarding instructions
+
+Document all important architectural decisions.
+
+---
+
+# 40. Implementation Methodology
+
+Do not attempt to build everything as one uncontrolled implementation.
+
+Implement incrementally.
+
+### Phase 1 — Foundation
+
+- Project architecture
+- Next.js frontend
+- FastAPI backend
+- PostgreSQL/Supabase
+- Authentication
+- RBAC
+- Base UI
+- Navigation
+- Audit logging
+- Core database models
+
+### Phase 2 — Asset & Vulnerability Management
+
+- Asset inventory
+- Scanner orchestration
+- Findings
+- Vulnerability management
+- Risk engine
+- Dashboard
+
+### Phase 3 — Web/API/Mobile Security
+
+- Web assessment
+- API security
+- Mobile security
+- SAST
+- SCA
+- Secrets detection
+
+### Phase 4 — Advanced Security
+
+- Crypto analysis
+- Quantum readiness
+- Cloud security
+- Container security
+- Threat intelligence
+
+### Phase 5 — DFIR
+
+- Cases
+- Evidence
+- Chain of custody
+- Timeline
+- IOC management
+- Incident response
+
+### Phase 6 — Enterprise
+
+- Advanced reporting
+- Compliance
+- Multi-tenancy
+- Advanced analytics
+- Integrations
+- Monitoring
+- Scaling
+- Production hardening
+
+---
+
+# 41. Critical Development Rules
+
+Before implementing any feature:
+
+1. Inspect the existing architecture.
+2. Identify dependencies.
+3. Determine where the feature belongs.
+4. Avoid duplicating existing functionality.
+5. Reuse existing components and services.
+6. Maintain a single source of truth.
+7. Maintain strict type safety.
+8. Do not break existing functionality.
+9. Add appropriate tests.
+10. Verify the feature end-to-end.
+
+Do not create temporary hacks that become permanent architecture.
+
+Do not hide errors.
+
+Do not silently swallow scanner failures.
+
+If a scanner fails, display:
+
+```text
+Scanner Status: Failed
+Reason: <actual reason>
+```
+
+rather than presenting an artificial successful result.
+
+---
+
+# 42. Final Quality Standard
+
+The completed application should feel like a serious enterprise cybersecurity product used by:
+
+- Security Engineering
+- SOC teams
+- Penetration Testers
+- DFIR Investigators
+- Security Architects
+- Vulnerability Management teams
+- DevSecOps teams
+- CISO organizations
+
+The application must prioritize:
+
+**Accuracy → Security → Evidence → Correlation → Usability → Performance → Scalability**
+
+The system should provide a unified security picture rather than a collection of disconnected scanners.
+
+---
+
+# 43. Final Deliverables
+
+Deliver a complete working system including:
+
+- Full-stack application
+- Frontend
+- FastAPI backend
+- PostgreSQL database
+- Supabase authentication
+- RBAC
+- Asset inventory
+- Vulnerability management
+- SAST
+- DAST
+- SCA
+- Secrets detection
+- Web security
+- Mobile security
+- API security
+- Cryptographic assessment
+- Quantum readiness assessment
+- Penetration-testing workspace
+- DFIR workspace
+- Incident response
+- Evidence management
+- Threat intelligence
+- Compliance mapping
+- Reporting
+- Audit logging
+- Real-time operations
+- Testing
+- Documentation
+- Deployment configuration
+
+Most importantly, ensure that **all security findings, metrics, dashboards, risk scores, reports, and analytics originate from real underlying data and evidence**.
+
+Build the platform with a clean architecture that allows additional security engines, forensic capabilities, integrations, and intelligence modules to be added without requiring a major rewrite.
+
+The end result should be a **Premium, Enterprise-Grade Unified Cybersecurity Assessment, Penetration Testing, Digital Forensics & Incident Response Platform** designed for authorized internal security operations.

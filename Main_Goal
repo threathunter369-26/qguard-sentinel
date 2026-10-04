@@ -1,0 +1,1856 @@
+# MASTER BUILD PROMPT
+
+## Enterprise Web & Mobile Application Security Assessment & Penetration Testing Platform
+
+You are acting as a **Principal Security Architect, Senior Application Security Engineer, Senior Penetration Tester, Full-Stack Engineer, DevSecOps Engineer, and AI Security Agent Engineer**.
+
+I am a Senior Penetration Tester tasked with designing and developing a **centralized, state-of-the-art Enterprise Web and Mobile Application Security Assessment Platform** for authorized security testing within our organization.
+
+The objective is to build a professional platform that centralizes **SAST, DAST, API Security Testing, Web Application Penetration Testing, Mobile Application Security Assessment, AI-assisted security analysis, vulnerability validation, evidence collection, reporting, remediation tracking, and continuous security testing** into one unified web application.
+
+The platform must be **production-oriented, modular, extensible, secure, auditable, multi-user, and enterprise-ready**.
+
+---
+
+# 1. PRIMARY OBJECTIVE
+
+Build a centralized security platform capable of performing authorized security assessments against:
+
+* Web Applications
+* REST APIs
+* GraphQL APIs
+* Web Services
+* SPAs
+* Backend Services
+* Microservices
+* Mobile Applications
+* Mobile APIs
+* Authentication/Authorization systems
+* Cloud-hosted applications
+* Containerized applications
+* Source-code repositories
+* CI/CD environments
+* Staging/Test environments
+* Development environments
+
+The platform should combine:
+
+### SAST
+
+Static Application Security Testing
+
+### DAST
+
+Dynamic Application Security Testing
+
+### API Security Testing
+
+### AI-Assisted Penetration Testing
+
+### Automated Reconnaissance
+
+### Vulnerability Discovery
+
+### Exploit Validation
+
+### Attack-Path Analysis
+
+### Evidence Collection
+
+### Risk Correlation
+
+### Security Reporting
+
+### Remediation Tracking
+
+### Continuous Security Validation
+
+The platform should help professional penetration testers work faster while **keeping human security professionals in control of testing decisions, scope, authorization, and final conclusions**.
+
+---
+
+# 2. IMPORTANT — ANALYZE THE FOLLOWING OPEN-SOURCE PROJECTS FIRST
+
+Before implementing the platform, perform a **deep technical analysis** of these repositories:
+
+1. https://github.com/KeygraphHQ/shannon
+2. https://github.com/0x4m4/hexstrike-ai
+3. https://github.com/usestrix/strix
+4. https://github.com/GH05TCREW/pentestagent
+
+Do NOT blindly copy these projects.
+
+Instead:
+
+1. Study their architecture.
+2. Study their agent orchestration.
+3. Study their scanning methodologies.
+4. Study their SAST capabilities.
+5. Study their DAST capabilities.
+6. Study their browser automation.
+7. Study their terminal/tool execution.
+8. Study their MCP implementations.
+9. Study their multi-agent architecture.
+10. Study their vulnerability detection logic.
+11. Study their exploitation/validation workflows.
+12. Study their reporting systems.
+13. Study their task/session management.
+14. Study their playbooks.
+15. Study their RAG/knowledge systems.
+16. Study their memory mechanisms.
+17. Study their CI/CD integrations.
+18. Study their sandboxing/isolation approaches.
+19. Study their dependencies and licenses.
+20. Identify reusable concepts versus code that should be independently reimplemented.
+
+For every repository, create an internal capability matrix:
+
+| Repository | Capability | Useful Feature | Integration Strategy | Dependencies | License | Security Concern |
+| ---------- | ---------- | -------------- | -------------------- | ------------ | ------- | ---------------- |
+
+Do not duplicate functionality unnecessarily.
+
+Where multiple repositories implement similar capabilities, create **one unified platform implementation** rather than maintaining multiple competing implementations.
+
+---
+
+# 3. REPOSITORY INTEGRATION PRINCIPLE
+
+The objective is NOT:
+
+> "Put four GitHub repositories inside one application."
+
+The objective is:
+
+> "Build one unified Enterprise Security Testing Platform that incorporates the best applicable capabilities and architectural patterns from these projects."
+
+Create a modular security-engineering architecture where components can be:
+
+* Integrated
+* Wrapped
+* Adapted
+* Reimplemented
+* Replaced
+* Upgraded
+* Extended
+
+without tightly coupling the entire platform to one external project.
+
+Use adapters/interfaces such as:
+
+```text
+SecurityEngine
+ScannerEngine
+SASTEngine
+DASTEngine
+ReconEngine
+BrowserEngine
+ExploitValidationEngine
+MobileSecurityEngine
+APIAnalysisEngine
+AgentEngine
+ReportingEngine
+EvidenceEngine
+```
+
+External tools should communicate with the platform through controlled service interfaces.
+
+---
+
+# 4. TARGET PLATFORM ARCHITECTURE
+
+Use the following primary technology stack.
+
+## Frontend
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+* shadcn/ui
+* Three.js
+* React Three Fiber where appropriate
+* GSAP
+* Framer Motion
+* Recharts or equivalent visualization framework
+* WebSockets / Server-Sent Events for live scan telemetry
+
+The frontend must be highly modular and component-driven.
+
+---
+
+# 5. BACKEND
+
+Use:
+
+* FastAPI
+* Python
+* PostgreSQL
+* Supabase
+* Supabase Authentication
+* Supabase Row-Level Security
+* Redis where appropriate
+* Celery / task queue or equivalent where appropriate
+* WebSockets / SSE
+* Object storage for evidence and reports
+
+Supabase should provide:
+
+* Authentication
+* PostgreSQL
+* Row-Level Security
+* Storage
+* Realtime capabilities where appropriate
+
+Do NOT place sensitive security execution logic directly inside frontend code.
+
+---
+
+# 6. SECURITY ENGINE / WORKER ARCHITECTURE
+
+Security tools and penetration-testing engines must execute inside isolated workers.
+
+Recommended architecture:
+
+```text
+                    ┌─────────────────────┐
+                    │     Next.js UI      │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │     FastAPI API     │
+                    └──────────┬──────────┘
+                               │
+                ┌──────────────┼──────────────┐
+                ▼              ▼              ▼
+        ┌────────────┐ ┌────────────┐ ┌────────────┐
+        │ Job Queue  │ │ AI Engine  │ │ PostgreSQL │
+        └─────┬──────┘ └────────────┘ └────────────┘
+              │
+              ▼
+       ┌─────────────────┐
+       │ Security Worker │
+       └────────┬────────┘
+                │
+     ┌──────────┼───────────┐
+     ▼          ▼           ▼
+   SAST       DAST       Pentest
+   Engine     Engine     Agents
+     │          │           │
+     └──────────┼───────────┘
+                ▼
+       ┌─────────────────┐
+       │ Finding Engine  │
+       └────────┬────────┘
+                ▼
+       ┌─────────────────┐
+       │ Evidence Engine │
+       └────────┬────────┘
+                ▼
+       ┌─────────────────┐
+       │ Reporting       │
+       └─────────────────┘
+```
+
+Every scan must have:
+
+* Unique scan ID
+* Target ID
+* User ID
+* Organization ID
+* Scope
+* Rules of Engagement
+* Start time
+* End time
+* Execution status
+* Engine status
+* Findings
+* Evidence
+* Logs
+* Artifacts
+* Final report
+
+---
+
+# 7. CORE APPLICATION MODULES
+
+Build the following major modules.
+
+## A. Executive Security Dashboard
+
+Provide:
+
+* Security posture overview
+* Total applications
+* Total APIs
+* Total mobile applications
+* Total assessments
+* Active scans
+* Completed scans
+* Critical vulnerabilities
+* High vulnerabilities
+* Medium vulnerabilities
+* Low vulnerabilities
+* Confirmed vulnerabilities
+* False positives
+* Remediation status
+* Risk trends
+* Security score
+* Application risk distribution
+* Vulnerability trends
+* Attack surface overview
+* Recent activity
+* Security assessment timeline
+
+All dashboard metrics must come from real backend data.
+
+**Do NOT use fake/random/mock production metrics.**
+
+---
+
+# 8. APPLICATION INVENTORY
+
+Create centralized application inventory.
+
+Each application should contain:
+
+* Application name
+* Application type
+* Environment
+* Owner
+* Business criticality
+* Technology stack
+* Repository
+* Deployment URL
+* API endpoints
+* Mobile packages
+* Authentication mechanism
+* Environment classification
+* Tags
+* Security classification
+* Assessment history
+
+Supported application types:
+
+* Web
+* API
+* Mobile Android
+* Mobile iOS
+* Microservice
+* Backend
+* Hybrid
+
+---
+
+# 9. SAST ENGINE
+
+Implement a dedicated SAST orchestration layer.
+
+The platform should support analysis of:
+
+* JavaScript
+* TypeScript
+* Python
+* Java
+* Kotlin
+* Swift
+* Go
+* PHP
+* C#
+* C/C++
+* configuration files
+* Dockerfiles
+* Infrastructure-as-Code
+
+Detect applicable issues including:
+
+* Injection
+* SQL Injection
+* Command Injection
+* XSS
+* SSRF
+* Path Traversal
+* Insecure Deserialization
+* Authentication weaknesses
+* Authorization weaknesses
+* Hardcoded secrets
+* Cryptographic weaknesses
+* Sensitive information exposure
+* Unsafe dependencies
+* Insecure API usage
+* Security misconfiguration
+* Dangerous data flows
+* Trust-boundary violations
+
+The SAST engine should support:
+
+```text
+Source Discovery
+       ↓
+Language Detection
+       ↓
+Architecture Analysis
+       ↓
+Dependency Analysis
+       ↓
+Data Flow Analysis
+       ↓
+Security Pattern Detection
+       ↓
+Attack Path Identification
+       ↓
+Finding Correlation
+       ↓
+DAST Validation
+```
+
+Where practical, combine traditional static analysis with AI-assisted reasoning.
+
+---
+
+# 10. DAST ENGINE
+
+Build a professional DAST orchestration layer.
+
+Capabilities should include:
+
+### Reconnaissance
+
+* Domain discovery
+* Subdomain discovery
+* Endpoint discovery
+* URL discovery
+* Technology fingerprinting
+* HTTP header analysis
+* TLS analysis
+* DNS analysis
+* Security header analysis
+
+### Web Crawling
+
+* Authenticated crawling
+* Unauthenticated crawling
+* JavaScript-aware crawling
+* SPA route discovery
+* API discovery
+* Form discovery
+* Parameter discovery
+* Hidden endpoint discovery
+
+### Vulnerability Testing
+
+Support appropriate testing for:
+
+* SQL Injection
+* XSS
+* SSRF
+* CSRF
+* XXE
+* Command Injection
+* Path Traversal
+* Authentication flaws
+* Authorization flaws
+* IDOR/BOLA
+* Session management
+* JWT weaknesses
+* OAuth/OIDC issues
+* CORS
+* Security headers
+* File upload vulnerabilities
+* API security weaknesses
+* Business-logic weaknesses
+
+---
+
+# 11. API SECURITY TESTING
+
+Create a dedicated API Security module.
+
+Support:
+
+* OpenAPI/Swagger import
+* GraphQL schema analysis
+* Postman collection import
+* Endpoint discovery
+* Authentication testing
+* Authorization testing
+* Rate-limit testing
+* Input validation testing
+* Parameter tampering
+* BOLA/IDOR testing
+* JWT analysis
+* OAuth testing
+* API fuzzing
+* Schema-based testing
+
+Provide:
+
+```text
+API Inventory
+Endpoint Map
+Authentication Map
+Authorization Matrix
+Parameter Map
+Risk Analysis
+Findings
+Evidence
+```
+
+---
+
+# 12. MOBILE APPLICATION SECURITY
+
+Create a dedicated Mobile Security Assessment module.
+
+Support Android and iOS assessment workflows.
+
+## Android
+
+Support analysis of:
+
+* APK
+* AAB where applicable
+* Manifest
+* Permissions
+* Activities
+* Services
+* Broadcast receivers
+* Content providers
+* Deep links
+* WebViews
+* Network security configuration
+* Certificate pinning
+* Hardcoded secrets
+* Embedded credentials
+* Cryptographic implementation
+* Local storage
+* SQLite
+* SharedPreferences
+* Keystore usage
+* Root detection
+* Debugging configuration
+* Exported components
+
+## iOS
+
+Support appropriate analysis of:
+
+* IPA
+* Entitlements
+* Info.plist
+* URL schemes
+* ATS configuration
+* Keychain usage
+* Local storage
+* WebViews
+* Certificate validation
+* Sensitive data exposure
+* Embedded secrets
+* Binary analysis
+* Runtime security controls
+
+Integrate mobile analysis tools through isolated workers where appropriate.
+
+---
+
+# 13. AI SECURITY AGENT
+
+Create an AI Security Agent orchestration layer inspired by the best concepts from the referenced projects.
+
+The AI agent should be able to:
+
+1. Understand assessment scope.
+2. Analyze application architecture.
+3. Analyze source code.
+4. Analyze attack surface.
+5. Generate hypotheses.
+6. Select appropriate security tools.
+7. Execute approved tests.
+8. Correlate results.
+9. Validate findings.
+10. Request additional evidence.
+11. Build attack paths.
+12. Generate remediation recommendations.
+13. Produce security reports.
+
+Use specialized agents where useful:
+
+```text
+Recon Agent
+SAST Agent
+DAST Agent
+API Security Agent
+Authentication Agent
+Authorization Agent
+Injection Agent
+XSS Agent
+SSRF Agent
+Mobile Security Agent
+Cloud Security Agent
+Exploit Validation Agent
+Evidence Agent
+Reporting Agent
+```
+
+Do not allow unrestricted autonomous execution.
+
+---
+
+# 14. MCP / TOOL ORCHESTRATION
+
+Create an extensible MCP/tool integration architecture.
+
+Security tools should be registered through a controlled tool registry.
+
+Example:
+
+```text
+Tool Registry
+ ├── Recon Tools
+ ├── Web Tools
+ ├── Browser Tools
+ ├── SAST Tools
+ ├── DAST Tools
+ ├── API Tools
+ ├── Mobile Tools
+ ├── Network Tools
+ ├── Cloud Tools
+ ├── Container Tools
+ └── Reporting Tools
+```
+
+Each tool should define:
+
+* Name
+* Version
+* Description
+* Capabilities
+* Input schema
+* Output schema
+* Required permissions
+* Execution environment
+* Timeout
+* Resource limits
+* Audit logging
+
+---
+
+# 15. ATTACK PLAYBOOKS
+
+Implement reusable assessment playbooks.
+
+Examples:
+
+```text
+OWASP Web Application Assessment
+OWASP API Security Assessment
+Authentication Assessment
+Authorization Assessment
+JWT Security Assessment
+OAuth Security Assessment
+GraphQL Assessment
+SSRF Assessment
+XSS Assessment
+SQL Injection Assessment
+File Upload Assessment
+Business Logic Assessment
+Mobile Android Assessment
+Mobile iOS Assessment
+```
+
+Users should be able to:
+
+* Select playbook
+* Configure scope
+* Configure exclusions
+* Configure credentials
+* Start assessment
+* Monitor progress
+* Pause
+* Resume
+* Cancel
+* Review results
+
+---
+
+# 16. SCOPE AND RULES OF ENGAGEMENT
+
+This is mandatory.
+
+Before an active penetration test can execute, require an explicit assessment configuration.
+
+Include:
+
+* Authorized targets
+* Domains
+* IP ranges
+* URLs
+* APIs
+* Mobile applications
+* Repository
+* Environment
+* Allowed methods
+* Excluded endpoints
+* Excluded IPs
+* Rate limits
+* Time window
+* Authentication credentials
+* Test intensity
+* Destructive-test policy
+* Production protection
+
+The system must prevent execution outside the defined scope.
+
+---
+
+# 17. SAFE EXECUTION ARCHITECTURE
+
+Because the platform performs active security testing:
+
+* Isolate workers.
+* Use Docker/containerized execution.
+* Apply CPU limits.
+* Apply memory limits.
+* Apply execution timeouts.
+* Apply network restrictions.
+* Maintain target allowlists.
+* Maintain deny lists.
+* Log every security-engine execution.
+* Require authorization before active testing.
+* Prevent accidental production testing where configured.
+* Clearly distinguish passive discovery from active exploitation.
+
+The platform must never silently expand scope.
+
+---
+
+# 18. FINDING CORRELATION ENGINE
+
+Create a centralized Finding Engine.
+
+Different scanners may detect the same vulnerability.
+
+Therefore:
+
+```text
+SAST Finding
+       +
+DAST Finding
+       +
+API Finding
+       +
+AI Finding
+       +
+Mobile Finding
+       ↓
+Finding Correlation
+       ↓
+Deduplication
+       ↓
+Evidence Correlation
+       ↓
+Confidence Calculation
+       ↓
+Validated Finding
+```
+
+Each finding should contain:
+
+* Finding ID
+* Title
+* Description
+* Severity
+* CWE
+* OWASP category
+* CVSS where applicable
+* Confidence
+* Affected asset
+* Affected endpoint
+* Source location
+* Parameter
+* Attack vector
+* Evidence
+* Request
+* Response
+* Screenshot
+* Payload where appropriate
+* Reproduction steps
+* Detection engine
+* Validation status
+* First detected
+* Last detected
+* Remediation status
+* Assigned owner
+
+---
+
+# 19. EVIDENCE MANAGEMENT
+
+Every validated vulnerability should have an evidence trail.
+
+Support:
+
+* HTTP requests
+* HTTP responses
+* Screenshots
+* Browser evidence
+* Source-code locations
+* Stack traces
+* Tool output
+* Logs
+* Payload metadata
+* Timestamps
+* Scan ID
+* Agent ID
+
+Evidence must be immutable/auditable where appropriate.
+
+---
+
+# 20. REAL-TIME SECURITY OPERATIONS UI
+
+Create a live assessment console.
+
+Display:
+
+```text
+Assessment
+   ↓
+Recon
+   ↓
+Discovery
+   ↓
+Analysis
+   ↓
+Testing
+   ↓
+Validation
+   ↓
+Evidence
+   ↓
+Reporting
+```
+
+Display real-time:
+
+* Current agent
+* Current task
+* Current tool
+* Progress
+* Requests
+* Findings discovered
+* Findings validated
+* Errors
+* Warnings
+* Resource usage
+* Scan duration
+
+Use WebSockets/SSE rather than repeatedly polling wherever practical.
+
+---
+
+# 21. VULNERABILITY MANAGEMENT
+
+Create a vulnerability management workspace.
+
+Features:
+
+* Vulnerability list
+* Filtering
+* Sorting
+* Search
+* Severity
+* Confidence
+* Status
+* Application
+* Environment
+* CWE
+* OWASP category
+* Assigned team
+* Assigned owner
+* SLA
+* Remediation status
+
+Statuses:
+
+```text
+New
+Confirmed
+Assigned
+In Remediation
+Fixed
+Retesting
+Verified
+Accepted Risk
+False Positive
+Closed
+```
+
+---
+
+# 22. REMEDIATION WORKFLOW
+
+For every confirmed finding provide:
+
+* Technical explanation
+* Root cause
+* Exploitation evidence
+* Remediation guidance
+* Secure coding recommendation
+* Relevant CWE
+* Relevant OWASP guidance
+* Suggested fix
+* Verification procedure
+
+Allow developers/security teams to track remediation.
+
+---
+
+# 23. REPORTING ENGINE
+
+Create enterprise-grade reporting.
+
+Support:
+
+* Executive Report
+* Technical Penetration Test Report
+* SAST Report
+* DAST Report
+* API Security Report
+* Mobile Security Report
+* Vulnerability Report
+* Remediation Report
+* Compliance Report
+
+Export:
+
+* PDF
+* HTML
+* JSON
+* CSV
+* SARIF where applicable
+
+Reports should contain:
+
+* Executive summary
+* Scope
+* Methodology
+* Assessment timeline
+* Assets assessed
+* Risk summary
+* Findings
+* Evidence
+* Attack paths
+* Recommendations
+* Remediation status
+* Appendix
+
+---
+
+# 24. ENTERPRISE DASHBOARD
+
+Create a sophisticated dashboard with:
+
+### Executive View
+
+* Overall Security Posture
+* Critical Findings
+* Risk Trend
+* Applications at Risk
+* Open Findings
+* Remediation SLA
+* Assessment Coverage
+
+### Security Operations View
+
+* Active assessments
+* Agents
+* Tasks
+* Tools
+* Findings
+* Evidence
+* Events
+* Logs
+
+### Developer View
+
+* Source findings
+* Code locations
+* Remediation guidance
+* Fix status
+* CI/CD results
+
+---
+
+# 25. FUTURISTIC UI/UX
+
+The platform should look like a **premium enterprise cyber-security command center**, not a generic admin dashboard.
+
+Use:
+
+* Three.js
+* React Three Fiber
+* GSAP
+* Framer Motion
+* Tailwind
+* shadcn/ui
+* Modern data visualization
+
+Use animations strategically.
+
+Do NOT overload the interface with unnecessary animations.
+
+---
+
+# 26. HOMEPAGE / LANDING PAGE
+
+Create a highly polished cybersecurity landing page.
+
+Visual concept:
+
+> Advanced Cybersecurity Operations Center + AI Security Laboratory + Futuristic Enterprise SOC
+
+Include:
+
+### Hero Section
+
+Large 3D visualization representing:
+
+* Application attack surface
+* Security nodes
+* Threat paths
+* Vulnerability graph
+* AI security agents
+* Digital network topology
+
+Animated headline:
+
+> **Intelligent Security Testing for Modern Applications**
+
+Supporting message:
+
+> Unified SAST, DAST, API Security, Mobile Security and AI-Assisted Penetration Testing.
+
+CTA:
+
+```text
+Start Security Assessment
+Explore Platform
+```
+
+---
+
+# 27. DESIGN LANGUAGE
+
+Use a premium enterprise visual system.
+
+Characteristics:
+
+* Dark cybersecurity theme
+* Optional light theme
+* Glassmorphism used carefully
+* Subtle gradients
+* Fine grid backgrounds
+* Cybersecurity network visualization
+* Professional typography
+* High information density where appropriate
+* Excellent accessibility
+* Responsive design
+* Desktop-first security operations experience
+* Mobile-responsive management interface
+
+Avoid:
+
+* Excessive neon
+* Gaming aesthetics
+* Excessive particle effects
+* Distracting animations
+* Fake terminal screens
+* Fake security metrics
+
+The application should look credible to:
+
+* CISOs
+* Security Architects
+* Penetration Testers
+* Application Security Engineers
+* SOC teams
+* DevSecOps teams
+* Enterprise IT teams
+
+---
+
+# 28. AUTHENTICATION & AUTHORIZATION
+
+Use Supabase Authentication.
+
+Support:
+
+* Email/password
+* MFA
+* Session management
+* Password reset
+* Role-based access control
+* Organization-based access control
+
+Roles:
+
+```text
+Platform Administrator
+Security Administrator
+Senior Pentester
+Pentester
+Security Analyst
+Developer
+Application Owner
+Auditor
+Viewer
+```
+
+Use PostgreSQL Row-Level Security.
+
+Never trust frontend authorization.
+
+All security-sensitive authorization decisions must be enforced server-side.
+
+---
+
+# 29. MULTI-TENANCY
+
+Design the database for enterprise multi-tenancy.
+
+Core entities:
+
+```text
+Organizations
+Users
+Roles
+Projects
+Applications
+Assets
+Targets
+Assessments
+Scans
+Tasks
+Agents
+Tools
+Findings
+Evidence
+Reports
+Remediations
+Audit Logs
+Playbooks
+Credentials
+Integrations
+```
+
+All tenant-owned data must be isolated.
+
+---
+
+# 30. SECRETS MANAGEMENT
+
+Never store credentials in plaintext.
+
+Implement secure handling for:
+
+* API credentials
+* Authentication credentials
+* Tokens
+* Cookies
+* SSH credentials
+* Cloud credentials
+
+Use encryption at rest and strict access control.
+
+Never expose secrets to frontend clients unnecessarily.
+
+---
+
+# 31. AUDIT LOGGING
+
+Log security-sensitive operations.
+
+Examples:
+
+```text
+User login
+Assessment created
+Scope changed
+Scan started
+Scan stopped
+Tool executed
+Agent created
+Finding created
+Finding modified
+Evidence accessed
+Report generated
+Credential accessed
+Configuration changed
+```
+
+Audit logs should contain:
+
+* Actor
+* Action
+* Timestamp
+* Organization
+* Resource
+* IP metadata where appropriate
+* Result
+* Correlation ID
+
+---
+
+# 32. OBSERVABILITY
+
+Implement:
+
+* Structured logging
+* Metrics
+* Tracing
+* Health checks
+* Worker health
+* Queue health
+* Database health
+* Scan engine health
+* AI provider health
+
+Provide an administrative system-health dashboard.
+
+---
+
+# 33. AI PROVIDER ABSTRACTION
+
+Do not tightly couple the platform to one LLM provider.
+
+Create:
+
+```text
+AIProvider
+ ├── OpenAI
+ ├── Anthropic
+ ├── Azure OpenAI
+ ├── Google
+ ├── Local Models
+ └── OpenAI-compatible APIs
+```
+
+Support configurable models per workload.
+
+For example:
+
+```text
+SAST reasoning → model A
+Exploit analysis → model B
+Report generation → model C
+Local/private assessment → local model
+```
+
+Never expose provider API keys to the browser.
+
+---
+
+# 34. CI/CD INTEGRATION
+
+Provide integrations for:
+
+* GitHub
+* GitLab
+* Jenkins
+* Azure DevOps
+* Generic CI/CD
+
+Support:
+
+```text
+Commit
+   ↓
+Build
+   ↓
+SAST
+   ↓
+Deploy to Test
+   ↓
+DAST
+   ↓
+Validation
+   ↓
+Security Gate
+   ↓
+Report
+```
+
+Allow configurable security gates based on organization policy.
+
+---
+
+# 35. DATABASE DESIGN
+
+Create a normalized PostgreSQL schema.
+
+Include proper:
+
+* Primary keys
+* Foreign keys
+* Indexes
+* Constraints
+* Timestamps
+* Soft deletion where appropriate
+* Tenant isolation
+* Audit relationships
+
+Avoid creating unnecessary duplicated data.
+
+Create migrations.
+
+---
+
+# 36. API DESIGN
+
+Create versioned APIs:
+
+```text
+/api/v1/auth
+/api/v1/organizations
+/api/v1/projects
+/api/v1/applications
+/api/v1/assets
+/api/v1/assessments
+/api/v1/scans
+/api/v1/tasks
+/api/v1/agents
+/api/v1/tools
+/api/v1/findings
+/api/v1/evidence
+/api/v1/remediation
+/api/v1/reports
+/api/v1/playbooks
+/api/v1/integrations
+/api/v1/audit
+```
+
+Use:
+
+* Pydantic
+* OpenAPI
+* Strong request validation
+* Authentication
+* Authorization
+* Rate limiting
+* Consistent error handling
+
+---
+
+# 37. NO MOCK SECURITY ENGINE
+
+This is extremely important.
+
+Do NOT build fake functionality such as:
+
+```text
+"Scan completed"
+"Found 27 vulnerabilities"
+"Risk score 83%"
+"SQL Injection detected"
+```
+
+unless these values actually come from an execution engine.
+
+Every security result must originate from:
+
+* Actual scanner execution
+* Actual source analysis
+* Actual browser interaction
+* Actual API testing
+* Actual tool output
+* Actual validated evidence
+
+Use explicit states such as:
+
+```text
+Not Started
+Queued
+Running
+Completed
+Failed
+Partial
+Not Applicable
+Not Tested
+```
+
+Never represent unavailable information as successful detection.
+
+---
+
+# 38. SCAN STATE MACHINE
+
+Implement a reliable scan lifecycle:
+
+```text
+CREATED
+   ↓
+AUTHORIZED
+   ↓
+QUEUED
+   ↓
+RUNNING
+   ↓
+RECON
+   ↓
+ANALYSIS
+   ↓
+TESTING
+   ↓
+VALIDATION
+   ↓
+CORRELATION
+   ↓
+REPORTING
+   ↓
+COMPLETED
+```
+
+With failure/cancellation states:
+
+```text
+FAILED
+CANCELLED
+TIMEOUT
+PARTIAL
+```
+
+The UI must always reflect the actual backend state.
+
+---
+
+# 39. ERROR HANDLING
+
+The system must gracefully handle:
+
+* Scanner failures
+* Tool crashes
+* Network errors
+* Timeout
+* AI provider failure
+* Worker failure
+* Database failure
+* Browser failure
+* Authentication failure
+* Invalid scope
+* Invalid target
+* Rate limiting
+
+Never report a successful assessment when the underlying engine failed.
+
+---
+
+# 40. TESTING REQUIREMENTS
+
+Implement comprehensive tests.
+
+### Frontend
+
+* Unit tests
+* Component tests
+* Integration tests
+* E2E tests
+
+### Backend
+
+* Unit tests
+* API tests
+* Authentication tests
+* Authorization tests
+* RLS tests
+
+### Security Engines
+
+* Scanner tests
+* Tool adapter tests
+* Finding correlation tests
+* Validation tests
+
+### End-to-End
+
+Test:
+
+```text
+Create project
+      ↓
+Register application
+      ↓
+Define scope
+      ↓
+Upload source
+      ↓
+Configure credentials
+      ↓
+Start SAST
+      ↓
+Start DAST
+      ↓
+Correlate findings
+      ↓
+Validate vulnerability
+      ↓
+Generate report
+      ↓
+Track remediation
+      ↓
+Retest
+      ↓
+Close finding
+```
+
+---
+
+# 41. SECURITY OF THE PLATFORM ITSELF
+
+The platform is itself a security-sensitive application.
+
+Perform security hardening against:
+
+* SQL Injection
+* XSS
+* CSRF
+* SSRF
+* RCE
+* Path Traversal
+* IDOR
+* Broken Access Control
+* Authentication weaknesses
+* Session attacks
+* Secrets exposure
+* Insecure deserialization
+* Command injection
+* Container escape risks
+* Agent/tool abuse
+* Prompt injection
+* Tool injection
+* Excessive permissions
+* Supply-chain attacks
+
+AI agents must operate under explicit permissions and scoped tool access.
+
+---
+
+# 42. DEVELOPMENT METHODOLOGY
+
+Do NOT attempt to build everything as one giant implementation.
+
+Use phases.
+
+## PHASE 1 — Architecture
+
+Analyze repositories and create:
+
+* Architecture document
+* Capability matrix
+* Dependency matrix
+* License matrix
+* Threat model
+* Data model
+* API architecture
+* Worker architecture
+* Agent architecture
+
+## PHASE 2 — Foundation
+
+Implement:
+
+* Next.js application
+* FastAPI
+* Supabase
+* Authentication
+* RBAC
+* Multi-tenancy
+* Database
+* API foundation
+* Audit logging
+
+## PHASE 3 — Security Engine Framework
+
+Implement:
+
+* Job system
+* Worker system
+* Tool registry
+* Scan orchestration
+* Scope enforcement
+* Execution sandbox
+* Event system
+
+## PHASE 4 — SAST
+
+Implement source analysis and finding pipeline.
+
+## PHASE 5 — DAST
+
+Implement crawling, discovery and dynamic testing.
+
+## PHASE 6 — API Security
+
+Implement OpenAPI/GraphQL/API testing.
+
+## PHASE 7 — Mobile Security
+
+Implement Android/iOS assessment workflows.
+
+## PHASE 8 — AI Security Agents
+
+Implement controlled agent orchestration.
+
+## PHASE 9 — Finding & Evidence Platform
+
+Implement:
+
+* Correlation
+* Deduplication
+* Evidence
+* Risk
+* Remediation
+
+## PHASE 10 — Reporting
+
+Implement enterprise reports.
+
+## PHASE 11 — CI/CD
+
+Implement pipeline integrations.
+
+## PHASE 12 — Enterprise Hardening
+
+Perform:
+
+* Security review
+* Performance testing
+* Load testing
+* Failure testing
+* Authorization testing
+* Container security
+* Dependency audit
+* E2E testing
+
+---
+
+# 43. PRODUCTION DEPLOYMENT
+
+The final architecture must support:
+
+```text
+Frontend
+     ↓
+Reverse Proxy / CDN
+     ↓
+Next.js
+     ↓
+FastAPI
+     ↓
+Queue
+     ↓
+Security Workers
+     ↓
+PostgreSQL / Supabase
+     ↓
+Object Storage
+```
+
+Workers must be independently scalable.
+
+Security scans should not block normal web application requests.
+
+Support horizontal scaling.
+
+---
+
+# 44. DOCUMENTATION
+
+Create:
+
+```text
+README.md
+ARCHITECTURE.md
+SECURITY.md
+THREAT-MODEL.md
+DEPLOYMENT.md
+DEVELOPMENT.md
+API.md
+DATABASE.md
+AGENTS.md
+TOOLS.md
+PLAYBOOKS.md
+CONTRIBUTING.md
+```
+
+Document all major architectural decisions.
+
+---
+
+# 45. CODE QUALITY REQUIREMENTS
+
+The implementation must follow:
+
+* SOLID principles
+* Clean Architecture where appropriate
+* Strong typing
+* Separation of concerns
+* Secure coding practices
+* DRY principles
+* Modular design
+* Dependency inversion
+* Testability
+
+Avoid:
+
+* Giant components
+* Giant Python modules
+* Hardcoded configuration
+* Magic numbers
+* Duplicate business logic
+* Duplicate scanner logic
+* Frontend-only security controls
+* Fake results
+* Temporary production hacks
+
+---
+
+# 46. FINAL QUALITY STANDARD
+
+The final platform should feel like a combination of:
+
+```text
+Enterprise AppSec Platform
+        +
+Professional Pentesting Platform
+        +
+SAST
+        +
+DAST
+        +
+API Security
+        +
+Mobile Security
+        +
+AI Security Agents
+        +
+Security Operations Center
+        +
+Vulnerability Management
+        +
+Evidence Management
+        +
+Enterprise Reporting
+```
+
+It should be suitable for use by professional penetration testers and application-security teams.
+
+---
+
+# 47. CRITICAL IMPLEMENTATION RULE
+
+Before writing significant amounts of code:
+
+### FIRST:
+
+Analyze the four GitHub repositories.
+
+### SECOND:
+
+Create the capability matrix.
+
+### THIRD:
+
+Identify overlapping functionality.
+
+### FOURTH:
+
+Determine which capabilities should be:
+
+* Reused
+* Wrapped
+* Adapted
+* Reimplemented
+* Replaced
+
+### FIFTH:
+
+Review each repository's license and dependency obligations.
+
+### SIXTH:
+
+Produce the proposed architecture.
+
+### SEVENTH:
+
+Produce the database schema.
+
+### EIGHTH:
+
+Produce the API specification.
+
+### NINTH:
+
+Produce the security/threat model.
+
+### TENTH:
+
+Only then begin implementation.
+
+Do not make architectural decisions based on assumptions when the repository source can be inspected.
+
+---
+
+# 48. DEFINITION OF DONE
+
+The project is NOT considered complete merely because the UI exists.
+
+It is complete only when:
+
+* Authentication works.
+* Authorization works.
+* Multi-tenancy works.
+* RLS works.
+* Applications can be registered.
+* Assessment scopes can be configured.
+* SAST actually executes.
+* DAST actually executes.
+* API testing actually executes.
+* Mobile assessment workflows function.
+* Security tools actually execute through workers.
+* AI agents actually orchestrate approved tasks.
+* Results are persisted.
+* Findings are correlated.
+* Duplicate findings are controlled.
+* Evidence is captured.
+* Reports are generated from real data.
+* Remediation can be tracked.
+* Retesting works.
+* Audit logs work.
+* Real-time scan status works.
+* Error states work.
+* Cancellation works.
+* Worker isolation works.
+* Security controls work.
+* Tests pass.
+* Production deployment is documented.
+* No fake security results exist.
+
+---
+
+# 49. IMPORTANT OPERATING PRINCIPLE
+
+This platform is intended for **authorized security testing only**.
+
+Build appropriate authorization, scope enforcement, auditability, isolation, and safety controls into the platform from the beginning.
+
+Do not optimize the platform merely for "maximum exploitation."
+
+Optimize it for:
+
+**accurate discovery → controlled testing → evidence → validation → risk analysis → remediation → verification → auditability.**
+
+The ultimate objective is to create a **professional, centralized, enterprise-grade application security assessment and penetration-testing platform** that combines the strongest applicable ideas from the referenced open-source projects while maintaining a clean, maintainable, secure, and independently extensible architecture.
+
+Begin with the repository analysis and architecture phase before implementation.

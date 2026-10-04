@@ -1,0 +1,33 @@
+Qguard-Sentinel/
+│
+├── CLAUDE.md
+│   └── What the system is + architecture + engineering standards
+│
+├── AGENTS.md
+│   └── How the AI agent must operate + verify + report
+│
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── SECURITY.md
+│   ├── THREAT-MODEL.md
+│   ├── SCANNER-ARCHITECTURE.md
+│   ├── DFIR-ARCHITECTURE.md
+│   ├── DATA-MODEL.md
+│   ├── API.md
+│   └── DEPLOYMENT.md
+│
+├── apps/
+│   └── web/
+│       └── CLAUDE.md
+│
+├── services/
+│   ├── api/
+│   │   └── CLAUDE.md
+│   ├── scanner/
+│   │   └── CLAUDE.md
+│   └── dfir/
+│       └── CLAUDE.md
+│
+└── packages/
+    └── ui/
+        └── CLAUDE.md

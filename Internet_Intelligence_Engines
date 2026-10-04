@@ -1,0 +1,5435 @@
+# QGUARD SENTINEL
+## Internet Intelligence, Threat Hunting & Infrastructure Intelligence Platform
+### Master Implementation Prompt for Claude Code / Codex
+
+---
+
+## 0. ROLE
+
+You are acting as a **Principal Security Platform Architect, Senior Full-Stack Security Engineer, DFIR Engineer, Threat Intelligence Engineer, Detection Engineer, Data Engineer, DevSecOps Engineer, and SRE**.
+
+You are extending the existing **Qguard Sentinel** security platform.
+
+Your task is to design, integrate, implement, test, validate, and production-harden a new first-class subsystem:
+
+# Qguard Sentinel Internet Intelligence & Threat Hunting Engine™
+### Internal codename: `sentinel-iith`
+
+The objective is to add capabilities conceptually comparable to the defensive Internet-observation/search workflows associated with platforms such as:
+
+- Shodan
+- Censys
+- ZoomEye
+- FOFA
+
+while using an architecture centered around the **ZMap ecosystem**, including:
+
+- ZMap
+- ZGrab2
+- ZDNS
+- LZR
+- ZCrypto
+- ZLint
+- ZCertificate
+- ZAnnotate
+- ZBlocklist
+
+and integrating these capabilities with Qguard Sentinel's existing:
+
+- Web Security
+- Mobile Security
+- SAST
+- DAST
+- Vulnerability Management
+- DFIR
+- Threat Intelligence
+- IOC Analysis
+- Malware Analysis
+- Security Reporting
+- Risk Management
+- Cryptographic/Quantum Security
+
+Do not build a disconnected scanning application.
+
+Build this as a deeply integrated **Internet Intelligence and Threat Hunting plane** within the existing Qguard Sentinel architecture.
+
+---
+
+# 1. CRITICAL ENGINEERING PRINCIPLES
+
+These requirements are mandatory.
+
+## 1.1 Preserve Existing Qguard Sentinel Functionality
+
+Before modifying the codebase:
+
+1. Inspect the entire repository.
+2. Identify the current frontend architecture.
+3. Identify the current backend architecture.
+4. Identify all database schemas and migrations.
+5. Identify authentication and authorization mechanisms.
+6. Identify Supabase usage.
+7. Identify existing API conventions.
+8. Identify existing security services.
+9. Identify existing scanner abstractions.
+10. Identify existing background workers and queues.
+11. Identify existing reporting and evidence systems.
+12. Identify existing DFIR components.
+13. Identify existing threat-intelligence functionality.
+14. Identify existing asset/inventory models.
+15. Identify current observability/logging.
+16. Identify deployment architecture.
+17. Identify existing environment-variable conventions.
+18. Identify existing test infrastructure.
+
+Do not replace an existing implementation merely because a new architecture appears cleaner.
+
+Extend the existing architecture where practical.
+
+Do not break:
+
+- authentication
+- authorization
+- tenant isolation
+- RLS
+- existing scanners
+- SAST
+- DAST
+- mobile security
+- vulnerability management
+- DFIR
+- reports
+- dashboards
+- asset inventory
+- existing API contracts
+- existing database relationships
+- billing/subscription controls
+- audit logging
+
+No destructive schema changes without migration and compatibility planning.
+
+---
+
+# 2. ABSOLUTE DATA INTEGRITY REQUIREMENT
+
+Qguard Sentinel must never fabricate:
+
+- hosts
+- IP addresses
+- domains
+- ports
+- CVEs
+- malware detections
+- C2 detections
+- threat actors
+- certificates
+- DNS results
+- scan results
+- threat scores
+- historical observations
+- geographic information
+- ASN information
+- fingerprints
+- infrastructure relationships
+
+No random numbers.
+
+No hardcoded security metrics.
+
+No fake activity feeds.
+
+No fake "live scanning" animations.
+
+No mock scan results presented as actual intelligence.
+
+No simulated detections unless the UI explicitly labels them as test fixtures/demo data.
+
+All production findings must originate from:
+
+1. actual scanner observations,
+2. authenticated/authorized external intelligence feeds,
+3. actual database records,
+4. deterministic detection rules,
+5. reproducible analytical pipelines,
+6. or clearly marked analyst-entered evidence.
+
+Every displayed observation must have provenance.
+
+---
+
+# 3. SECURITY AND AUTHORIZATION MODEL
+
+This platform is a **defensive security and threat-intelligence system**.
+
+Implement strong operational controls.
+
+The Internet scanning subsystem must distinguish between:
+
+### MODE A — Owned Asset Scanning
+
+Targets explicitly owned or controlled by the organization.
+
+### MODE B — Customer Authorized Scanning
+
+Customer-provided assets where explicit authorization is recorded.
+
+### MODE C — Research / Internet Measurement
+
+Only enabled for appropriately authorized and governed Internet measurement activity.
+
+### MODE D — Internal Infrastructure
+
+Private RFC1918 / RFC6598 / internal networks where explicitly authorized.
+
+Do not assume that authentication inside Qguard Sentinel itself constitutes authorization to scan arbitrary third-party infrastructure.
+
+Every scan must have:
+
+```text
+scan_authorization
+authorization_type
+authorized_by
+authorized_at
+scope
+scope_source
+customer_id
+tenant_id
+operator_id
+expiration
+purpose
+ticket/reference
+rate_policy
+blocklist_policy
+```
+
+Implement an auditable scan-governance layer.
+
+---
+
+# 4. NO EXPLOITATION THROUGH THE INTERNET INTELLIGENCE ENGINE
+
+The Internet Intelligence scanning plane must be **observation-first**.
+
+It must not:
+
+- exploit vulnerabilities,
+- brute-force credentials,
+- attempt password guessing,
+- bypass authentication,
+- establish authenticated sessions,
+- deploy payloads,
+- execute arbitrary remote code,
+- weaponize discovered vulnerabilities,
+- attempt privilege escalation,
+- attempt credential theft,
+- perform destructive actions,
+- evade security controls,
+- or attempt to deanonymize private individuals.
+
+The service-intelligence layer should collect information available through normal unauthenticated protocol interaction.
+
+Do not turn ZGrab2 into an exploit framework.
+
+The ZGrab2 project itself explicitly separates its application-layer measurements from authentication, exploitation, and brute-force behavior.
+
+The Internet Intelligence engine must follow the same principle.
+
+---
+
+# 5. HIGH-LEVEL PRODUCT OBJECTIVE
+
+Transform Qguard Sentinel from:
+
+```text
+Web/Mobile Security Platform
+```
+
+into:
+
+```text
+Enterprise Cybersecurity + DFIR + Internet Intelligence Platform
+```
+
+with this additional capability:
+
+```text
+Discover
+   ↓
+Observe
+   ↓
+Fingerprint
+   ↓
+Enrich
+   ↓
+Normalize
+   ↓
+Correlate
+   ↓
+Search
+   ↓
+Investigate
+   ↓
+Detect
+   ↓
+Hunt
+   ↓
+Timeline
+   ↓
+Report
+```
+
+The system must build its own continuously evolving:
+
+# Internet Infrastructure Knowledge Base
+
+---
+
+# 6. TARGET PLATFORM ARCHITECTURE
+
+Use the existing Qguard Sentinel stack wherever possible.
+
+Preferred logical architecture:
+
+```text
+                         QGUARD SENTINEL
+                               │
+            ┌──────────────────┼──────────────────┐
+            │                  │                  │
+        Web / UI            API Plane        Authentication
+            │                  │                  │
+            └──────────────────┼──────────────────┘
+                               │
+                      Internet Intelligence API
+                               │
+                ┌──────────────┼──────────────┐
+                │              │              │
+          Scan Orchestrator  Enrichment      Search
+                │              │              │
+                └──────────────┼──────────────┘
+                               │
+                         Event / Queue
+                               │
+                ┌──────────────┼──────────────┐
+                │              │              │
+              ZMap          ZGrab2          ZDNS
+                │              │              │
+                └──────────────┼──────────────┘
+                               │
+                              LZR
+                               │
+                    Protocol / Service Layer
+                               │
+                 ┌─────────────┼─────────────┐
+                 │             │             │
+             ZCrypto         ZLint       ZCertificate
+                 │             │             │
+                 └─────────────┼─────────────┘
+                               │
+                         Normalization
+                               │
+               ┌───────────────┼────────────────┐
+               │               │                │
+           PostgreSQL       Search Store      Analytics
+               │            OpenSearch        ClickHouse
+               │               │                │
+               └───────────────┼────────────────┘
+                               │
+                         Graph Correlation
+                               │
+                            Neo4j*
+                               │
+                ┌──────────────┼──────────────┐
+                │              │              │
+              C2          Malware/IOC      Threat Actor
+           Detection       Correlation      Campaigns
+                │              │              │
+                └──────────────┼──────────────┘
+                               │
+                        DFIR Investigation
+                               │
+                        Executive Reporting
+```
+
+`Neo4j`, `ClickHouse`, and `OpenSearch` should be introduced only if they fit the current deployment strategy. Do not force an infrastructure rewrite simply to support this subsystem.
+
+The architecture must remain capable of starting with PostgreSQL/Supabase and scaling horizontally later.
+
+---
+
+# 7. INTERNET INTELLIGENCE PRODUCT MODULES
+
+Create the following logical modules.
+
+## 7.1 Sentinel Internet Discovery Engine™
+
+Responsibilities:
+
+- IP discovery
+- service discovery
+- TCP observation
+- UDP measurement where appropriate
+- authorized port discovery
+- IPv4 observation
+- IPv6 observation where architecture permits
+- network-prefix scanning
+- organization-specific scanning
+- scheduled rescans
+- delta scanning
+- discovery change detection
+
+Primary technology:
+
+```text
+ZMap
+```
+
+The ZMap project is explicitly designed for large-scale Internet measurement and provides the foundation for Internet-wide host/service observation.
+
+Do not expose raw high-speed scanning capabilities directly to normal end users.
+
+Wrap all scanning in the Qguard Sentinel authorization, rate-control, audit, and policy layer.
+
+---
+
+# 8. SCAN ORCHESTRATOR
+
+Build a dedicated:
+
+## Sentinel Scan Orchestrator™
+
+It should manage:
+
+```text
+Scan Request
+   ↓
+Authorization Validation
+   ↓
+Scope Validation
+   ↓
+Blocklist Validation
+   ↓
+Rate Policy
+   ↓
+Job Creation
+   ↓
+ZMap Discovery
+   ↓
+Service Classification
+   ↓
+ZGrab2
+   ↓
+Enrichment
+   ↓
+Normalization
+   ↓
+Correlation
+   ↓
+Detection
+   ↓
+Persistence
+   ↓
+Indexing
+   ↓
+Graph Update
+   ↓
+Risk Evaluation
+   ↓
+Notification
+```
+
+Each scan must have:
+
+```text
+scan_id
+tenant_id
+operator_id
+scope
+scope_type
+authorization_id
+scan_profile
+start_time
+end_time
+status
+progress
+targets_discovered
+targets_responded
+services_observed
+errors
+rate_policy
+blocked_targets
+data_quality_status
+```
+
+---
+
+# 9. SCAN PROFILES
+
+Implement profiles such as:
+
+### Asset Discovery
+
+Discovers reachable infrastructure.
+
+### Web Exposure
+
+Focuses on HTTP/HTTPS and associated metadata.
+
+### TLS Intelligence
+
+Focuses on TLS and certificates.
+
+### Service Intelligence
+
+Performs protocol/service identification.
+
+### Attack Surface
+
+Builds an external attack-surface inventory.
+
+### Threat Hunting
+
+Runs authorized observation and correlation workflows against defined indicators.
+
+### C2 Investigation
+
+Correlates known or suspected C2 infrastructure.
+
+### Malware Infrastructure Hunt
+
+Pivots from malware IOCs into Internet infrastructure.
+
+### DFIR Pivot
+
+Searches existing Sentinel observations using an IOC.
+
+### Crypto / Quantum Exposure
+
+Analyzes observed cryptographic protocols, certificates, algorithms, and key properties.
+
+### Full Intelligence Scan
+
+Runs the complete authorized observation pipeline.
+
+---
+
+# 10. ZGRAB2 SERVICE INTELLIGENCE
+
+Integrate ZGrab2 as the application-layer observation system.
+
+The integration should support available modules appropriate to the deployment, such as:
+
+- HTTP
+- TLS
+- SSH
+- SMTP
+- FTP
+- POP3
+- IMAP
+- DNS-related services
+- MQTT
+- Redis
+- MySQL
+- PostgreSQL
+- MongoDB
+- SMB
+- SOCKS5
+- Telnet
+- NTP
+- Modbus
+- IPP
+- other supported service modules
+
+Do not assume every module should run against every port.
+
+Implement service-selection logic.
+
+Example:
+
+```text
+ZMap identifies responsive endpoint
+        ↓
+LZR/service detection
+        ↓
+Protocol classification
+        ↓
+Appropriate ZGrab2 module
+        ↓
+Structured observation
+```
+
+ZGrab2 is specifically designed to perform deeper application-layer handshakes after network-level discovery.
+
+---
+
+# 11. LZR INTEGRATION
+
+Use LZR as an optional service-identification layer.
+
+Objective:
+
+Detect cases such as:
+
+```text
+Port 443
+Actual protocol = unexpected service
+```
+
+rather than assuming:
+
+```text
+443 = HTTPS
+22 = SSH
+80 = HTTP
+```
+
+Create findings such as:
+
+```text
+UNEXPECTED_SERVICE
+PROTOCOL_PORT_MISMATCH
+SERVICE_ON_NONSTANDARD_PORT
+```
+
+Do not treat unusual-port usage itself as malicious.
+
+It is a contextual signal.
+
+---
+
+# 12. ZDNS / DNS INTELLIGENCE ENGINE
+
+Build:
+
+# Sentinel DNS Intelligence™
+
+Support:
+
+- A
+- AAAA
+- CNAME
+- MX
+- NS
+- SOA
+- TXT
+- CAA
+- PTR
+- SPF
+- DMARC
+- DNSSEC-related observations
+- historical observations when available
+- DNS change tracking
+
+Record:
+
+```text
+domain
+record_type
+value
+ttl
+nameserver
+timestamp
+first_seen
+last_seen
+source
+```
+
+Develop relationship models:
+
+```text
+Domain
+  ↓
+A/AAAA
+  ↓
+IP
+  ↓
+ASN
+```
+
+and:
+
+```text
+Domain
+  ↓
+CNAME
+  ↓
+Provider / Service
+```
+
+and:
+
+```text
+Domain
+  ↓
+NS
+  ↓
+Nameserver Infrastructure
+```
+
+---
+
+# 13. CERTIFICATE INTELLIGENCE
+
+Build:
+
+# Sentinel Certificate Intelligence™
+
+Integrate:
+
+- X.509 parsing
+- certificate fingerprinting
+- certificate chains
+- SANs
+- issuer
+- subject
+- validity
+- key type
+- key size
+- signature algorithm
+- public-key algorithm
+- extensions
+- trust information
+- CT-related metadata
+- lint results
+- first seen
+- last seen
+- observed hosts
+- observed ports
+
+Use:
+
+```text
+ZCrypto
+ZCertificate
+ZLint
+```
+
+where appropriate.
+
+The ZMap ecosystem explicitly provides ZCrypto, ZLint, ZCertificate and related certificate tooling.
+
+---
+
+# 14. CERTIFICATE PIVOTING
+
+Implement:
+
+```text
+Certificate
+   ↓
+Hosts
+   ↓
+Domains
+   ↓
+Ports
+   ↓
+Historical observations
+```
+
+and reverse pivots:
+
+```text
+IP
+ ↓
+Certificate
+ ↓
+Other IPs
+ ↓
+Other domains
+```
+
+and:
+
+```text
+Domain
+ ↓
+Certificate
+ ↓
+Historical hosts
+```
+
+Certificate reuse should be treated as a correlation indicator, not automatic proof of common ownership or threat-actor identity.
+
+Historical certificate/host pivots are a proven Internet-intelligence workflow. Censys documents certificate timelines and host history specifically for threat hunting and infrastructure analysis.
+
+---
+
+# 15. TLS INTELLIGENCE
+
+Create:
+
+# Sentinel TLS Intelligence™
+
+Collect and normalize where available:
+
+- TLS versions
+- cipher suites
+- supported groups
+- signature algorithms
+- certificate chain
+- ALPN
+- SNI behavior
+- session characteristics
+- JA3/JA4 where implemented
+- JARM
+- server behavior
+- certificate fingerprint
+- cryptographic algorithms
+
+Use fingerprints as correlation signals, not as definitive identity.
+
+---
+
+# 16. HTTP INTELLIGENCE
+
+Create:
+
+# Sentinel HTTP Intelligence™
+
+Capture safe unauthenticated metadata such as:
+
+- HTTP status
+- title
+- server header
+- content type
+- response headers
+- redirects
+- TLS association
+- technology indicators where reliably derived
+- security headers
+- favicon hash where appropriate
+- response characteristics
+- canonical URL where available
+- observed paths only when explicitly part of the safe scan profile
+
+Create normalized fields:
+
+```text
+http.status_code
+http.server
+http.title
+http.content_type
+http.redirects
+http.security_headers
+http.favicon_hash
+http.technology
+```
+
+Do not turn this system into an unrestricted crawler.
+
+---
+
+# 17. INTERNET HOST DATA MODEL
+
+Implement a normalized host model.
+
+Example:
+
+```text
+internet_host
+---------------------------
+id
+ip
+ip_version
+asn
+asn_name
+prefix
+country
+region
+city
+rdns
+first_seen
+last_seen
+observation_count
+threat_score
+c2_score
+malware_score
+anonymization_type
+tenant_visibility
+created_at
+updated_at
+```
+
+---
+
+# 18. SERVICE DATA MODEL
+
+```text
+internet_service
+---------------------------
+id
+host_id
+ip
+port
+transport
+protocol
+service_name
+product
+product_version
+banner_hash
+tls_fingerprint
+jarm
+ja3
+ja4
+http_fingerprint
+state
+first_seen
+last_seen
+observation_count
+```
+
+---
+
+# 19. DOMAIN DATA MODEL
+
+```text
+internet_domain
+---------------------------
+id
+domain
+registrar
+registration_date
+expiration_date
+first_seen
+last_seen
+rdap_source
+risk_score
+threat_score
+malware_score
+c2_score
+created_at
+updated_at
+```
+
+---
+
+# 20. CERTIFICATE MODEL
+
+```text
+certificate
+---------------------------
+id
+sha256
+sha1
+serial_number
+subject
+issuer
+valid_from
+valid_to
+signature_algorithm
+public_key_algorithm
+public_key_size
+san_count
+san_values
+trust_status
+lint_status
+ct_status
+first_seen
+last_seen
+```
+
+---
+
+# 21. OBSERVATION MODEL
+
+Every observation must be immutable where practical.
+
+```text
+observation
+---------------------------
+id
+scan_id
+timestamp
+source
+asset_type
+asset_id
+raw_reference
+normalized_reference
+result
+confidence
+parser_version
+scanner_version
+schema_version
+```
+
+Maintain raw results separately from normalized analytical data.
+
+Never destroy original evidence when normalizing.
+
+---
+
+# 22. RAW EVIDENCE STORAGE
+
+Implement:
+
+# Sentinel Evidence Vault
+
+Store raw:
+
+- ZMap observations
+- ZGrab2 results
+- DNS results
+- certificate data
+- service fingerprints
+- enrichment responses
+- intelligence-feed records
+
+with:
+
+```text
+hash
+timestamp
+source
+collector
+parser_version
+schema_version
+retention_policy
+```
+
+Evidence must be traceable back to the original observation.
+
+---
+
+# 23. HISTORICAL INTERNET OBSERVATION ENGINE
+
+This is a core feature.
+
+Do not only store current state.
+
+Store:
+
+```text
+FIRST_SEEN
+LAST_SEEN
+OBSERVATION_COUNT
+STATE_CHANGES
+CONFIGURATION_CHANGES
+SERVICE_CHANGES
+CERTIFICATE_CHANGES
+DNS_CHANGES
+HOSTING_CHANGES
+```
+
+Support queries such as:
+
+```text
+What was observed on this IP 30 days ago?
+
+Which domains resolved to this IP historically?
+
+When did the service first appear?
+
+When did the certificate change?
+
+Which hosts presented this certificate?
+
+When did the infrastructure disappear?
+
+When did the hosting/ASN relationship change?
+```
+
+Censys similarly uses historical host snapshots and certificate history to support investigation and threat hunting.
+
+---
+
+# 24. CHANGE DETECTION
+
+Create:
+
+# Sentinel Infrastructure Change Detector™
+
+Detect:
+
+- new service
+- removed service
+- port change
+- certificate change
+- domain change
+- IP change
+- ASN change
+- TLS fingerprint change
+- HTTP fingerprint change
+- software change
+- DNS change
+
+Generate:
+
+```text
+INFRASTRUCTURE_CHANGE
+```
+
+with severity determined by context.
+
+---
+
+# 25. INFRASTRUCTURE KNOWLEDGE GRAPH
+
+Implement:
+
+# Sentinel Infrastructure Graph™
+
+Entities:
+
+```text
+IP
+Domain
+Certificate
+ASN
+Network Prefix
+Provider
+Nameserver
+Service
+Port
+TLS Fingerprint
+JARM
+JA3
+JA4
+HTTP Fingerprint
+Malware
+IOC
+Campaign
+Threat Actor
+URL
+Hash
+Hosting Provider
+VPN
+Proxy
+Tor Exit
+Organization
+```
+
+Relationships:
+
+```text
+RESOLVES_TO
+HOSTS
+PRESENTS_CERTIFICATE
+USES_CERTIFICATE
+USES_TLS_FINGERPRINT
+USES_HTTP_FINGERPRINT
+BELONGS_TO_ASN
+ANNOUNCED_BY
+ASSOCIATED_WITH
+OBSERVED_WITH
+RELATED_TO
+INDICATOR_OF
+SEEN_ON
+HOSTED_ON
+PREVIOUSLY_RESOLVED_TO
+```
+
+Do not create relationship edges without provenance.
+
+Every edge must have:
+
+```text
+source
+timestamp
+confidence
+evidence_id
+method
+```
+
+---
+
+# 26. SEARCH ENGINE
+
+Build:
+
+# Sentinel Search™
+
+Provide fast structured search comparable in concept to Internet search engines.
+
+Examples:
+
+```text
+ip:203.0.113.10
+```
+
+```text
+port:443
+```
+
+```text
+service:https
+```
+
+```text
+asn:AS12345
+```
+
+```text
+domain:example.com
+```
+
+```text
+certificate.sha256:<fingerprint>
+```
+
+```text
+jarm:<fingerprint>
+```
+
+```text
+tls.ja4:<fingerprint>
+```
+
+```text
+country:PH
+```
+
+```text
+c2_confidence:>70
+```
+
+```text
+malware_confidence:>70
+```
+
+```text
+first_seen:>2026-01-01
+```
+
+Support Boolean logic:
+
+```text
+AND
+OR
+NOT
+```
+
+Support:
+
+```text
+=
+!=
+>
+<
+>=
+<=
+CONTAINS
+STARTS_WITH
+```
+
+Never expose raw database query syntax directly.
+
+Build a safe parser/AST.
+
+---
+
+# 27. THREAT INTELLIGENCE ENGINE
+
+Create:
+
+# Sentinel Threat Intelligence Engine™
+
+Support multiple intelligence sources through adapters.
+
+Potential integrations should be modular and configurable, including where appropriately licensed/authorized:
+
+- MISP
+- AlienVault OTX
+- VirusTotal
+- ThreatFox
+- URLhaus
+- AbuseIPDB
+- Spamhaus
+- commercial threat-intelligence feeds
+- internal IOC feeds
+- customer-provided IOC lists
+- CT feeds
+- RDAP
+- BGP/routing datasets
+- passive DNS sources
+- malware intelligence sources
+
+Do not hard-code vendor dependencies.
+
+Use provider interfaces:
+
+```text
+ThreatIntelProvider
+```
+
+with:
+
+```text
+lookup_ip()
+lookup_domain()
+lookup_hash()
+lookup_url()
+lookup_certificate()
+lookup_asn()
+lookup_ioc()
+```
+
+Every result must preserve:
+
+```text
+provider
+provider_record_id
+provider_timestamp
+confidence
+classification
+raw_reference
+```
+
+---
+
+# 28. IOC MANAGEMENT
+
+Create:
+
+# Sentinel IOC Repository™
+
+Supported IOC types:
+
+- IPv4
+- IPv6
+- domain
+- subdomain
+- URL
+- URI
+- SHA256
+- SHA1
+- MD5 where legacy data requires it
+- certificate fingerprint
+- JA3
+- JA4
+- JARM
+- email
+- ASN
+- CIDR
+- YARA-compatible indicator reference
+- Sigma-compatible indicator reference
+
+Every IOC needs:
+
+```text
+ioc_id
+type
+value
+normalized_value
+source
+confidence
+severity
+first_seen
+last_seen
+expiration
+tags
+campaign
+malware_family
+references
+```
+
+---
+
+# 29. C2 DETECTION ENGINE
+
+Create:
+
+# Sentinel C2 Intelligence Engine™
+
+Do not detect C2 from one weak signal.
+
+Use multiple explainable signals.
+
+Potential signals:
+
+### Network Signals
+
+- unusual exposed service
+- unexpected protocol
+- infrastructure reuse
+- service persistence
+- suspicious hosting pattern
+- unusual port/service pairing
+
+### DNS Signals
+
+- suspicious domain relationships
+- rapid infrastructure rotation
+- high churn
+- abnormal resolution patterns
+- known malicious DNS intelligence
+- DGA-like characteristics where applicable
+
+### TLS Signals
+
+- fingerprint relationships
+- suspicious certificate reuse
+- unusual certificate properties
+- certificate infrastructure clusters
+
+### HTTP Signals
+
+- suspicious infrastructure patterns
+- repeated response characteristics
+- malicious intelligence matches
+- suspicious redirect behavior
+- known C2 fingerprints where validated
+
+### Intelligence Signals
+
+- threat-feed match
+- malware IOC relationship
+- campaign relationship
+- historical malicious observation
+
+Generate an explainable score:
+
+```text
+C2_CONFIDENCE
+```
+
+Do not claim:
+
+```text
+"This is definitely C2."
+```
+
+unless there is authoritative evidence.
+
+Instead:
+
+```text
+Potential C2 Infrastructure
+
+Confidence: 86/100
+
+Evidence:
++ Known IOC match
++ Historical relationship to malware infrastructure
++ Certificate reuse
++ Shared TLS fingerprint
++ Domain intelligence
+```
+
+---
+
+# 30. C2 DETECTION EVIDENCE GRAPH
+
+Every C2 finding must show:
+
+```text
+WHY
+
+IP
+ ↓
+Domain
+ ↓
+Certificate
+ ↓
+Malware IOC
+ ↓
+Threat feed
+ ↓
+Historical observation
+```
+
+The analyst must be able to inspect every correlation.
+
+---
+
+# 31. MALWARE INFRASTRUCTURE ENGINE
+
+Create:
+
+# Sentinel Malware Infrastructure Correlator™
+
+Input:
+
+```text
+Malware hash
+Domain
+IP
+URL
+Certificate
+IOC
+YARA result
+Sandbox result
+EDR event
+DFIR artifact
+```
+
+Pivot:
+
+```text
+IOC
+ ↓
+Infrastructure
+ ↓
+Historical infrastructure
+ ↓
+Certificates
+ ↓
+Domains
+ ↓
+IPs
+ ↓
+ASN
+ ↓
+Related IOCs
+ ↓
+Campaign
+```
+
+Do not infer malware family merely from generic hosting characteristics.
+
+Use explicit intelligence or validated rules.
+
+---
+
+# 32. THREAT ACTOR / CAMPAIGN TRACKING
+
+Create:
+
+# Sentinel Campaign Intelligence™
+
+Represent campaigns and actor-related infrastructure as evidence-backed clusters.
+
+Entity model:
+
+```text
+campaign
+campaign_infrastructure
+campaign_ioc
+campaign_malware
+campaign_domain
+campaign_certificate
+campaign_timeline
+campaign_reference
+```
+
+Avoid personal identification claims.
+
+Do not claim that a human actor has been "identified" simply because multiple IPs correlate.
+
+Use terms such as:
+
+```text
+Infrastructure Cluster
+Potentially Related Infrastructure
+Campaign Association
+Observed Relationship
+Attribution Confidence
+```
+
+---
+
+# 33. VPN / PROXY / TOR / ANONYMIZATION INTELLIGENCE
+
+Create:
+
+# Sentinel Anonymization Intelligence™
+
+Classify infrastructure where supported:
+
+```text
+VPN
+Forward Proxy
+Reverse Proxy
+Tor Exit
+Hosting Proxy
+Residential Proxy
+Cloud Proxy
+CDN
+NAT
+Unknown
+```
+
+The system should identify the **observed network infrastructure**, not falsely claim the hidden origin.
+
+For example:
+
+```text
+Observed Source IP
+        ↓
+Known VPN Network
+        ↓
+VPN Provider
+```
+
+Report:
+
+```text
+Anonymization Infrastructure Detected
+Confidence: 94%
+```
+
+Do not report:
+
+```text
+Attacker's real IP = ...
+```
+
+unless an independently sourced, legally obtained, authoritative record exists.
+
+---
+
+# 34. ATTRIBUTION ENGINE
+
+Create:
+
+# Sentinel Infrastructure Attribution Engine™
+
+The purpose is infrastructure correlation, not unsupported human attribution.
+
+Generate:
+
+```text
+Attribution Assessment
+```
+
+containing:
+
+```text
+Observed Infrastructure
+Related Infrastructure
+Correlation Signals
+Supporting Evidence
+Conflicting Evidence
+Historical Relationships
+Confidence
+Analyst Notes
+```
+
+Example:
+
+```text
+Potentially Related Infrastructure
+
+Confidence: 82%
+
+Supporting:
+- certificate overlap
+- TLS fingerprint overlap
+- shared DNS infrastructure
+- temporal overlap
+- malware IOC relationship
+
+Conflicting:
+- different ASNs
+- different hosting providers
+```
+
+Never eliminate uncertainty.
+
+---
+
+# 35. PROXY / VPN LIMITATION
+
+Explicitly communicate:
+
+```text
+Internet observation can reveal infrastructure relationships,
+but it does not inherently reveal the real identity or original
+source IP hidden behind a VPN, proxy, NAT, CDN, Tor relay,
+or similar service.
+```
+
+The platform must never market this feature as a guaranteed "VPN bypass" or "attacker deanonymization" function.
+
+---
+
+# 36. THREAT SCORING ENGINE
+
+Create multiple distinct scores.
+
+Do NOT collapse everything into a single opaque number.
+
+Use:
+
+```text
+Exposure Score
+Threat Score
+C2 Confidence
+Malware Confidence
+Anonymization Confidence
+Infrastructure Relationship Confidence
+Vulnerability Risk
+Crypto Risk
+Quantum Exposure Risk
+```
+
+Each score requires:
+
+```text
+score
+reason_codes
+evidence
+timestamp
+model/rule_version
+```
+
+---
+
+# 37. NO DUPLICATE FINDINGS
+
+Qguard Sentinel already contains multiple scanners and intelligence systems.
+
+Prevent duplicate findings.
+
+Create:
+
+# Unified Finding Identity
+
+Example:
+
+```text
+finding_fingerprint =
+tenant
++
+asset
++
+finding_type
++
+normalized_indicator
++
+rule_id
+```
+
+Multiple detection engines may contribute evidence to one finding.
+
+Example:
+
+```text
+Same IP
+    ↓
+Threat Feed
+    ↓
+C2 Engine
+    ↓
+Malware Engine
+    ↓
+DFIR Engine
+
+         ↓
+
+ONE UNIFIED FINDING
+with multiple evidence sources
+```
+
+This is essential.
+
+---
+
+# 38. CRYPTOGRAPHIC INTELLIGENCE
+
+Integrate Internet Intelligence with existing Qguard Sentinel crypto analysis.
+
+For observed TLS/certificate data identify:
+
+```text
+RSA
+ECC
+ECDSA
+ECDH
+X25519
+DH
+DSA
+AES
+ChaCha20
+SHA-256
+SHA-384
+SHA-512
+SHA-3
+ML-KEM
+ML-DSA
+SLH-DSA
+Hybrid PQC
+```
+
+Classify:
+
+```text
+Classical
+Hybrid
+Post-Quantum
+Quantum-Vulnerable
+Unknown
+```
+
+Be careful:
+
+- ML-KEM is a key-establishment/KEM mechanism.
+- ML-DSA and SLH-DSA are signature schemes.
+- Do not classify KEMs as signatures.
+- Do not claim quantum safety solely because a service uses TLS 1.3.
+- Do not infer PQC support without evidence.
+
+---
+
+# 39. QUANTUM INTERNET INTELLIGENCE
+
+Add:
+
+# Sentinel Quantum Internet Exposure™
+
+Track:
+
+```text
+public TLS endpoints
+certificate algorithms
+key exchange observations
+signature algorithms
+classical cryptographic dependencies
+PQC/hybrid observations
+PQC migration gaps
+```
+
+Produce views:
+
+```text
+Quantum-Vulnerable Public Assets
+Hybrid PQC Assets
+PQC Capable Assets
+Unknown Crypto Posture
+```
+
+Integrate these findings with the existing Qguard Helix/Qguard Sentinel quantum-security data model where applicable.
+
+---
+
+# 40. ASSET RELATIONSHIP GRAPH
+
+A Qguard Sentinel asset should be able to connect to:
+
+```text
+Internal Asset
+   │
+   ├── Public IP
+   ├── Domain
+   ├── Subdomain
+   ├── Certificate
+   ├── Cloud
+   ├── Service
+   ├── Technology
+   ├── IOC
+   └── Historical Observation
+```
+
+This allows:
+
+```text
+Internal Incident
+       ↓
+Observed C2
+       ↓
+Internet Infrastructure
+       ↓
+Related Domains
+       ↓
+Certificate
+       ↓
+Other Infrastructure
+```
+
+---
+
+# 41. DFIR INTEGRATION
+
+When an investigator encounters:
+
+```text
+IP
+Domain
+URL
+Hash
+Certificate
+JARM
+JA3
+JA4
+ASN
+```
+
+provide:
+
+# Investigate in Sentinel
+
+The system should automatically pivot through:
+
+```text
+Current Observations
+Historical Observations
+Threat Intelligence
+Malware
+Certificates
+DNS
+ASN
+Hosting
+Infrastructure Graph
+C2 Findings
+Related Campaigns
+```
+
+Provide:
+
+```text
+Timeline
+Graph
+Evidence
+Relationships
+Risk
+Confidence
+```
+
+---
+
+# 42. DFIR TIMELINE
+
+Create unified timeline events:
+
+```text
+IOC discovered
+Domain registered
+DNS changed
+IP observed
+Port observed
+Certificate issued
+Certificate observed
+Service changed
+Infrastructure changed
+Threat-feed match
+Malware relationship
+C2 relationship
+IOC expired
+```
+
+Visualize chronologically.
+
+---
+
+# 43. INTERNET ASSET INVENTORY
+
+Create:
+
+# Sentinel Internet Asset Inventory™
+
+Views:
+
+```text
+Hosts
+Domains
+Services
+Certificates
+ASNs
+Networks
+Technologies
+Cloud Providers
+CDNs
+VPNs
+Proxies
+Threat Indicators
+```
+
+Filters:
+
+```text
+Tenant
+Authorization Scope
+Country
+ASN
+Port
+Protocol
+Service
+Threat Score
+C2 Score
+Malware Score
+Crypto Risk
+Quantum Risk
+First Seen
+Last Seen
+```
+
+---
+
+# 44. EXTERNAL ATTACK SURFACE MANAGEMENT
+
+Integrate discovered Internet-facing assets into Qguard Sentinel's existing ASM/Vulnerability workflows.
+
+Example:
+
+```text
+New Internet Host
+      ↓
+Service Discovery
+      ↓
+Technology
+      ↓
+Vulnerability Mapping
+      ↓
+CVE Correlation
+      ↓
+Risk
+      ↓
+Remediation
+```
+
+Do not duplicate the existing vulnerability engine.
+
+Use the existing vulnerability service if one already exists.
+
+---
+
+# 45. SEARCH RESULTS
+
+Create enterprise-grade search results.
+
+Each result should display:
+
+```text
+Asset
+IP
+Domain
+Port
+Protocol
+Service
+Product
+ASN
+Country
+Certificate
+TLS
+Threat Intelligence
+C2
+Malware
+First Seen
+Last Seen
+Risk
+Confidence
+```
+
+Actions:
+
+```text
+Open Asset
+Investigate
+View Timeline
+View Graph
+View Certificate
+View DNS
+View Services
+View Threat Intel
+Create Case
+Create Finding
+Export Evidence
+Add to Watchlist
+```
+
+---
+
+# 46. THREAT HUNTING WORKSPACE
+
+Create:
+
+# Threat Hunting Command Center
+
+Sections:
+
+### Search
+
+IOC/infrastructure search.
+
+### Hunt
+
+Detection queries.
+
+### Timeline
+
+Historical infrastructure.
+
+### Graph
+
+Relationship analysis.
+
+### Cases
+
+Investigation management.
+
+### Watchlists
+
+Track specific domains/IPs/certificates.
+
+### Alerts
+
+New infrastructure changes.
+
+### Campaigns
+
+Campaign-level analysis.
+
+---
+
+# 47. WATCHLIST ENGINE
+
+Allow analysts to watch:
+
+```text
+IP
+CIDR
+Domain
+Subdomain
+Certificate
+ASN
+JARM
+JA3
+JA4
+IOC
+Campaign
+Malware Family
+```
+
+Trigger alerts for:
+
+```text
+new observation
+new service
+certificate change
+DNS change
+ASN change
+new threat intelligence
+C2 classification change
+malware association
+infrastructure disappearance
+infrastructure reappearance
+```
+
+---
+
+# 48. ALERT ENGINE
+
+Create:
+
+# Sentinel Detection & Alerting Engine™
+
+Alerts need:
+
+```text
+alert_id
+rule_id
+severity
+confidence
+tenant
+asset
+evidence
+timestamp
+first_seen
+last_seen
+status
+case_id
+```
+
+Statuses:
+
+```text
+NEW
+ACKNOWLEDGED
+INVESTIGATING
+FALSE_POSITIVE
+CONFIRMED
+RESOLVED
+SUPPRESSED
+```
+
+---
+
+# 49. SEARCH WATCH RULES
+
+Allow saved rules:
+
+```text
+certificate.sha256 = ...
+```
+
+```text
+domain contains "example"
+```
+
+```text
+jarm = ...
+```
+
+```text
+c2_confidence >= 80
+```
+
+When new observations match:
+
+```text
+Search Rule
+ ↓
+Matching Observation
+ ↓
+Alert
+ ↓
+Case
+```
+
+---
+
+# 50. INFRASTRUCTURE GRAPH UI
+
+Build an interactive graph.
+
+Nodes:
+
+```text
+IP
+Domain
+Certificate
+ASN
+Service
+Malware
+IOC
+Campaign
+Provider
+```
+
+Edges should show:
+
+```text
+relationship type
+timestamp
+confidence
+source
+```
+
+Support:
+
+```text
+Expand Node
+Collapse Node
+Filter Relationship
+Filter Time
+Highlight Threat Paths
+View Evidence
+View Timeline
+Export Graph
+```
+
+Avoid overwhelming the user with thousands of nodes.
+
+Use progressive expansion.
+
+---
+
+# 51. HISTORICAL COMPARISON UI
+
+Provide:
+
+```text
+COMPARE OBSERVATIONS
+```
+
+Example:
+
+```text
+IP: X.X.X.X
+
+2026-08-01
+443 HTTPS
+Certificate A
+nginx
+
+vs.
+
+2026-10-01
+8443 HTTPS
+Certificate B
+Apache
+```
+
+Highlight:
+
+```text
+Added
+Removed
+Changed
+Unchanged
+```
+
+---
+
+# 52. SCANNER STATUS UI
+
+Build operational dashboards for:
+
+```text
+Scan Jobs
+Workers
+Queue Depth
+Throughput
+Errors
+Dropped Results
+Parsing Failures
+Enrichment Failures
+Database Lag
+Indexing Lag
+Scanner Health
+```
+
+Do not show fake throughput numbers.
+
+All values must come from actual worker telemetry.
+
+---
+
+# 53. ADMIN SCAN GOVERNANCE DASHBOARD
+
+Administrators must see:
+
+```text
+Active Scans
+Scheduled Scans
+Completed Scans
+Failed Scans
+Authorized Scopes
+Expired Authorizations
+Blocked Targets
+Rate Policies
+Abuse Events
+Operator Actions
+```
+
+---
+
+# 54. BLOCKLIST / EXCLUSION SYSTEM
+
+Implement:
+
+# Sentinel Scan Exclusion Engine™
+
+Support:
+
+```text
+IP
+CIDR
+ASN
+Organization
+Network
+Domain
+Provider
+```
+
+Reasons:
+
+```text
+customer_request
+provider_opt_out
+legal_restriction
+internal_policy
+scan_safety
+maintenance
+incident_response
+```
+
+Do not scan excluded targets.
+
+Integrate the ZBlocklist concept where appropriate. The ZMap project explicitly provides ZBlocklist for filtering networks that request exclusion from scans.
+
+---
+
+# 55. RATE CONTROL
+
+Build:
+
+# Sentinel Scan Rate Controller™
+
+Controls:
+
+```text
+packets/sec
+requests/sec
+targets/sec
+concurrent_workers
+per-network limits
+per-tenant limits
+global safety limits
+```
+
+Requirements:
+
+- safe defaults
+- administrator-controlled limits
+- automatic backoff
+- timeout handling
+- retry limits
+- circuit breaker
+- abuse-response mechanism
+
+The operator should never need to manually tune raw packet behavior for ordinary use.
+
+---
+
+# 56. ABUSE / SAFETY CONTROLS
+
+Create:
+
+```text
+Abuse Contact
+Scan Identifier
+Operator Identifier
+Tenant
+Authorization Reference
+Scan Purpose
+Scope
+Timestamp
+```
+
+Keep an audit trail.
+
+If external complaints or operational anomalies are detected:
+
+```text
+Pause
+ ↓
+Review
+ ↓
+Modify scope/rate
+ ↓
+Resume if authorized
+```
+
+---
+
+# 57. MULTI-TENANCY
+
+All Internet Intelligence data must respect tenant isolation.
+
+Every record requiring tenant association must include:
+
+```text
+tenant_id
+```
+
+Use Supabase/PostgreSQL RLS or the existing Qguard authorization mechanism.
+
+Never trust:
+
+```text
+client-provided tenant_id
+```
+
+for authorization.
+
+Derive tenant identity from authenticated server-side context.
+
+---
+
+# 58. DATA CLASSIFICATION
+
+Classify data:
+
+```text
+PUBLIC_OBSERVATION
+TENANT_PRIVATE
+CUSTOMER_CONFIDENTIAL
+THREAT_INTELLIGENCE
+SECURITY_SENSITIVE
+FORENSIC_EVIDENCE
+```
+
+Create retention policies accordingly.
+
+---
+
+# 59. DATA PROVENANCE
+
+Every important observation should support:
+
+```text
+source
+collector
+scanner
+scanner_version
+parser
+parser_version
+timestamp
+raw_record_hash
+evidence_id
+confidence
+```
+
+A security analyst must be able to answer:
+
+> Where did this finding come from?
+
+---
+
+# 60. SEARCH INDEX
+
+If OpenSearch is already available, use it.
+
+Otherwise:
+
+Start with PostgreSQL indexed search for MVP and introduce OpenSearch when scale requires it.
+
+Index:
+
+```text
+IP
+Domain
+URL
+Certificate Fingerprint
+JARM
+JA3
+JA4
+ASN
+Port
+Service
+Product
+Threat Score
+C2 Score
+Malware Score
+First Seen
+Last Seen
+```
+
+---
+
+# 61. TIME-SERIES ANALYTICS
+
+If ClickHouse is available or justified, use it for:
+
+```text
+observations
+service changes
+historical snapshots
+large scan datasets
+trend analysis
+threat metrics
+time-series analytics
+```
+
+Do not place very large analytical workloads on transactional Supabase tables.
+
+---
+
+# 62. DATABASE DESIGN
+
+Separate:
+
+### Transactional Data
+
+PostgreSQL / Supabase.
+
+### Analytical Data
+
+ClickHouse where required.
+
+### Search Data
+
+OpenSearch where required.
+
+### Relationship Data
+
+Neo4j or graph-compatible PostgreSQL design.
+
+### Evidence
+
+Object storage.
+
+### Queue/Event Infrastructure
+
+Use existing queue technology; if absent, design an abstraction supporting NATS/Kafka/Redis-backed queues.
+
+Do not require every component for local development.
+
+---
+
+# 63. LOCAL DEVELOPMENT MODE
+
+The entire Internet Intelligence subsystem must be runnable locally.
+
+Provide:
+
+```text
+docker-compose
+development configuration
+test fixtures
+synthetic local targets
+mock threat-intelligence providers
+database migrations
+seed data clearly marked as TEST DATA
+```
+
+Never point development scans at arbitrary Internet targets automatically.
+
+---
+
+# 64. SAFE TEST ENVIRONMENT
+
+Create test targets using:
+
+- local services
+- controlled containers
+- intentionally vulnerable local services
+- test TLS certificates
+- mock DNS
+- synthetic IOC data
+- deterministic fixtures
+
+Do not use third-party targets as automated integration-test targets.
+
+---
+
+# 65. API DESIGN
+
+Create versioned APIs.
+
+Example:
+
+```text
+/api/v1/internet-intelligence
+```
+
+Suggested endpoints:
+
+```text
+POST /scans
+GET /scans
+GET /scans/:id
+POST /scans/:id/cancel
+GET /scans/:id/events
+
+GET /hosts
+GET /hosts/:id
+
+GET /services
+GET /services/:id
+
+GET /domains
+GET /domains/:id
+
+GET /certificates
+GET /certificates/:fingerprint
+
+GET /observations
+GET /observations/:id
+
+GET /search
+POST /search
+
+GET /graph
+POST /graph/query
+
+GET /threat-intel
+GET /iocs
+
+GET /c2
+GET /malware
+
+GET /campaigns
+GET /campaigns/:id
+
+GET /timeline
+
+GET /watchlists
+POST /watchlists
+
+GET /alerts
+POST /alerts/:id/acknowledge
+
+GET /cases
+POST /cases
+```
+
+Use the existing API naming conventions where they differ.
+
+---
+
+# 66. SEARCH API
+
+The search engine should expose:
+
+```text
+query
+filters
+sort
+page
+cursor
+time_range
+fields
+```
+
+Prefer cursor-based pagination for large datasets.
+
+Do not use unbounded offset pagination over huge datasets.
+
+---
+
+# 67. GRAPH API
+
+Provide:
+
+```text
+seed
+depth
+relationship_types
+time_range
+confidence_threshold
+node_limit
+```
+
+Always impose server-side limits.
+
+---
+
+# 68. AI THREAT HUNTER
+
+Create:
+
+# Sentinel AI Threat Hunter™
+
+The AI must never invent intelligence.
+
+Architecture:
+
+```text
+User Question
+      ↓
+Intent Parser
+      ↓
+Search Planner
+      ↓
+Structured Data Retrieval
+      ↓
+Threat Intelligence Retrieval
+      ↓
+Graph Retrieval
+      ↓
+Timeline Retrieval
+      ↓
+Evidence Aggregation
+      ↓
+LLM Reasoning
+      ↓
+Evidence-backed Answer
+```
+
+The AI may:
+
+- summarize
+- correlate
+- explain
+- identify patterns
+- generate investigative hypotheses
+- suggest pivots
+- summarize timelines
+- explain threat intelligence
+- generate detection ideas
+- generate reports
+
+The AI must not:
+
+- invent IOCs
+- invent evidence
+- claim attribution without evidence
+- claim a VPN was bypassed
+- claim a human identity based solely on infrastructure
+- convert weak correlation into certainty
+
+Every AI-generated conclusion must link to evidence.
+
+---
+
+# 69. AI QUERY EXAMPLES
+
+Support questions such as:
+
+```text
+"Show me infrastructure related to this certificate."
+```
+
+```text
+"Which domains historically resolved to this IP?"
+```
+
+```text
+"What services were exposed by this host during the last 90 days?"
+```
+
+```text
+"Find infrastructure sharing this JARM fingerprint."
+```
+
+```text
+"Show indicators related to this malware hash."
+```
+
+```text
+"Which observed assets have suspicious TLS changes?"
+```
+
+```text
+"Show evidence supporting the C2 classification."
+```
+
+```text
+"Compare this host's infrastructure before and after the certificate change."
+```
+
+---
+
+# 70. AI ANSWER FORMAT
+
+Use:
+
+```text
+Finding
+Evidence
+Correlations
+Timeline
+Confidence
+Contradictory Evidence
+Recommended Next Investigation
+Sources
+```
+
+Never present speculative information as fact.
+
+---
+
+# 71. THREAT INTELLIGENCE CONFIDENCE
+
+Normalize provider confidence into a common model.
+
+Retain original provider confidence separately.
+
+Example:
+
+```text
+source_confidence
+normalized_confidence
+```
+
+Do not destroy source semantics.
+
+---
+
+# 72. THREAT SCORE EXPLAINABILITY
+
+Every score should be explainable.
+
+For example:
+
+```text
+Threat Score: 78
+
+Factors:
++ Known malicious IOC
++ Malware infrastructure relationship
++ Recent observation
++ Suspicious certificate reuse
+
+Negative factors:
+- No current threat-feed confirmation
+- Shared hosting may explain correlation
+```
+
+This is much better than:
+
+```text
+Threat Score = 78
+```
+
+with no explanation.
+
+---
+
+# 73. FALSE POSITIVE MANAGEMENT
+
+Analysts should be able to mark:
+
+```text
+False Positive
+Benign Infrastructure
+Shared Hosting
+CDN
+Research Infrastructure
+Known Corporate Service
+Monitoring System
+Security Scanner
+```
+
+Use feedback for rule tuning.
+
+Never automatically learn from one analyst decision without governance.
+
+---
+
+# 74. SECURITY SCANNER CORRELATION
+
+Integrate Internet observations with Qguard Sentinel's existing vulnerability findings.
+
+Example:
+
+```text
+Internet Host
+ ↓
+Service
+ ↓
+Detected Product
+ ↓
+CVE Intelligence
+ ↓
+Existing Vulnerability Engine
+ ↓
+Existing Risk Engine
+```
+
+Do not build a second vulnerability database unnecessarily.
+
+---
+
+# 75. EXISTING QGUARD SENTINEL FINDINGS
+
+Where an existing Qguard finding already exists:
+
+```text
+merge evidence
+```
+
+instead of:
+
+```text
+create duplicate finding
+```
+
+Implement cross-engine finding identity.
+
+---
+
+# 76. CASE MANAGEMENT INTEGRATION
+
+Investigators must be able to create:
+
+# Threat Hunt Case
+
+from:
+
+- host
+- domain
+- IOC
+- malware
+- C2
+- certificate
+- scan result
+- alert
+- graph node
+- timeline event
+
+Case should contain:
+
+```text
+case_id
+title
+severity
+status
+analyst
+created_at
+updated_at
+evidence
+observations
+IOCs
+notes
+timeline
+related_assets
+related_campaigns
+```
+
+---
+
+# 77. REPORTING
+
+Add report types:
+
+### Internet Exposure Report
+
+### Threat Infrastructure Report
+
+### C2 Investigation Report
+
+### Malware Infrastructure Report
+
+### Infrastructure Relationship Report
+
+### IOC Investigation Report
+
+### Threat Hunting Report
+
+### DFIR Pivot Report
+
+### Internet Attack Surface Report
+
+### TLS/Cryptographic Exposure Report
+
+### Quantum Internet Exposure Report
+
+Reports must include:
+
+```text
+Scope
+Collection Time
+Data Sources
+Methodology
+Evidence
+Findings
+Confidence
+Limitations
+Timeline
+Relationships
+Recommendations
+```
+
+---
+
+# 78. REPORT LIMITATIONS
+
+Reports must explicitly distinguish:
+
+```text
+Observed
+Derived
+Correlated
+Reported by Third Party
+Analyst Assessment
+AI-assisted Interpretation
+```
+
+This is critical for professional DFIR work.
+
+---
+
+# 79. EXPORT FORMATS
+
+Support:
+
+```text
+JSON
+CSV
+NDJSON
+PDF
+HTML
+STIX 2.1 where appropriate
+MISP-compatible export where appropriate
+```
+
+Do not lose provenance during export.
+
+---
+
+# 80. STIX / MISP INTEGRATION
+
+Build optional adapters.
+
+Support:
+
+```text
+IP Indicator
+Domain Indicator
+URL Indicator
+Hash Indicator
+Certificate Indicator
+Infrastructure Relationship
+Malware Relationship
+Campaign Relationship
+```
+
+Retain source references.
+
+---
+
+# 81. RBAC
+
+Implement roles appropriate to the current Qguard Sentinel model.
+
+At minimum:
+
+```text
+Super Admin
+Security Administrator
+Threat Hunter
+DFIR Analyst
+Security Analyst
+Viewer
+Customer Analyst
+```
+
+Separate:
+
+```text
+view intelligence
+launch authorized scan
+manage scan authorization
+manage blocklists
+manage threat feeds
+manage detection rules
+manage cases
+manage integrations
+export evidence
+```
+
+---
+
+# 82. AUDIT LOGGING
+
+Every sensitive action should generate:
+
+```text
+actor
+tenant
+action
+target
+timestamp
+source_ip
+request_id
+authorization
+result
+```
+
+Examples:
+
+```text
+scan_created
+scan_started
+scan_cancelled
+scope_changed
+blocklist_modified
+threat_rule_modified
+IOC_created
+IOC_deleted
+case_created
+evidence_exported
+external_feed_modified
+```
+
+---
+
+# 83. SECRETS MANAGEMENT
+
+Never put:
+
+- API keys
+- provider secrets
+- scanner credentials
+- database passwords
+
+in source code.
+
+Use environment variables or the project's existing secret-management system.
+
+Never expose secrets to the browser.
+
+---
+
+# 84. OBSERVABILITY
+
+Every worker must expose:
+
+```text
+health
+readiness
+metrics
+structured logs
+trace id
+scan id
+job id
+```
+
+Track:
+
+```text
+scan_duration
+scan_targets
+scan_success
+scan_failure
+worker_queue_depth
+parser_failures
+enrichment_failures
+database_latency
+search_latency
+graph_latency
+alert_latency
+```
+
+---
+
+# 85. ERROR HANDLING
+
+Never silently discard scanner results.
+
+Every failure should be classified:
+
+```text
+NETWORK_TIMEOUT
+TARGET_UNREACHABLE
+PROTOCOL_ERROR
+PARSER_ERROR
+RATE_LIMIT
+BLOCKED
+AUTHORIZATION_ERROR
+DATABASE_ERROR
+INDEXING_ERROR
+ENRICHMENT_ERROR
+UNKNOWN
+```
+
+Partial scans must remain recoverable.
+
+---
+
+# 86. RESILIENCE
+
+Implement:
+
+- retry with bounded limits
+- exponential backoff
+- dead-letter queues
+- idempotent processing
+- resumable scans where practical
+- job checkpoints
+- duplicate suppression
+- worker recovery
+
+Do not rerun a complete expensive scan merely because one downstream consumer failed.
+
+---
+
+# 87. DATA PIPELINE
+
+Use:
+
+```text
+Discovery
+ ↓
+Collection
+ ↓
+Parsing
+ ↓
+Normalization
+ ↓
+Validation
+ ↓
+Enrichment
+ ↓
+Correlation
+ ↓
+Detection
+ ↓
+Persistence
+ ↓
+Search Index
+ ↓
+Graph
+ ↓
+Alerting
+ ↓
+Reporting
+```
+
+Each stage must be independently observable.
+
+---
+
+# 88. SCHEMA VERSIONING
+
+All raw/normalized records must contain:
+
+```text
+schema_version
+```
+
+When schema changes:
+
+```text
+migrate
+```
+
+rather than breaking historical records.
+
+---
+
+# 89. SCANNER VERSIONING
+
+Record:
+
+```text
+scanner_name
+scanner_version
+config_version
+parser_version
+rule_version
+```
+
+This allows historical reproducibility.
+
+---
+
+# 90. DETECTION RULE FRAMEWORK
+
+Create a rule framework.
+
+Example:
+
+```text
+rule_id
+name
+description
+severity
+confidence
+version
+status
+logic
+references
+created_by
+updated_at
+```
+
+Rule categories:
+
+```text
+C2
+MALWARE
+INFRASTRUCTURE
+TLS
+CERTIFICATE
+DNS
+HTTP
+SERVICE
+ANONYMIZATION
+CRYPTO
+QUANTUM
+```
+
+Rules should be deterministic and testable.
+
+---
+
+# 91. RULE TESTING
+
+Every detection rule needs:
+
+```text
+positive fixture
+negative fixture
+edge cases
+expected confidence
+expected severity
+```
+
+A rule cannot be promoted without passing tests.
+
+---
+
+# 92. YARA / SIGMA INTEGRATION
+
+Where appropriate, integrate existing Qguard Sentinel YARA/SIGMA engines rather than creating duplicate detection systems.
+
+Use:
+
+```text
+YARA
+SIGMA
+IOC
+Threat Intel
+Infrastructure rules
+```
+
+as complementary detection layers.
+
+---
+
+# 93. WATCHLIST EXAMPLE
+
+An analyst creates:
+
+```text
+Certificate SHA256 = ABC...
+```
+
+The engine monitors future observations.
+
+When observed:
+
+```text
+New Observation
+ ↓
+Watchlist Match
+ ↓
+Correlation
+ ↓
+Alert
+ ↓
+Timeline
+ ↓
+Case
+```
+
+---
+
+# 94. INFRASTRUCTURE CLUSTERING
+
+Implement clustering based on explainable features:
+
+```text
+certificate reuse
+TLS fingerprint
+HTTP fingerprint
+DNS relationships
+shared ASN
+shared hosting
+temporal overlap
+shared malware indicators
+shared threat-intelligence references
+```
+
+Do not cluster solely because:
+
+```text
+same ASN
+```
+
+or:
+
+```text
+same country
+```
+
+or:
+
+```text
+same provider
+```
+
+Those are weak indicators.
+
+---
+
+# 95. TEMPORAL CORRELATION
+
+Support:
+
+```text
+same-time relationship
+before/after relationship
+infrastructure migration
+certificate rotation
+domain migration
+IP migration
+service migration
+```
+
+Example:
+
+```text
+Old IP
+ ↓
+Certificate reused
+ ↓
+New IP
+```
+
+This becomes:
+
+```text
+Potential Infrastructure Migration
+```
+
+---
+
+# 96. INFRASTRUCTURE MIGRATION DETECTION
+
+Create:
+
+# Sentinel Infrastructure Migration Engine™
+
+Detect:
+
+```text
+IP → IP
+Domain → Domain
+Certificate → IP
+IP → Domain
+ASN → ASN
+Provider → Provider
+```
+
+based on evidence.
+
+---
+
+# 97. THREAT INFRASTRUCTURE LIFECYCLE
+
+Track:
+
+```text
+Discovery
+Registration
+Activation
+Observation
+Change
+Threat Association
+Migration
+Dormancy
+Reactivation
+Disappearance
+```
+
+This provides campaign lifecycle intelligence.
+
+---
+
+# 98. INTERNET MAP
+
+Create:
+
+# Sentinel Internet Map™
+
+Users should be able to visualize:
+
+```text
+Hosts
+Services
+Domains
+Certificates
+ASNs
+Providers
+Threat Infrastructure
+```
+
+with filters.
+
+Do not attempt to render millions of nodes directly.
+
+Use:
+
+```text
+aggregation
+clustering
+viewport-based loading
+pagination
+sampling
+server-side filtering
+```
+
+---
+
+# 99. DASHBOARD
+
+Create:
+
+# Internet Intelligence Command Center
+
+Hero cards:
+
+```text
+Internet Assets Observed
+Active Hosts
+Active Services
+Domains
+Certificates
+New Observations
+Infrastructure Changes
+Threat Indicators
+C2 Candidates
+Malware Associations
+Watchlist Matches
+Active Investigations
+```
+
+Do not hardcode values.
+
+---
+
+# 100. THREAT LANDSCAPE
+
+Dashboard sections:
+
+```text
+Threat Infrastructure
+C2 Candidates
+Malware Infrastructure
+New Suspicious Infrastructure
+Infrastructure Changes
+Top Emerging Indicators
+Certificate Reuse
+Suspicious DNS
+Anonymization Infrastructure
+Quantum Crypto Exposure
+```
+
+---
+
+# 101. SCAN DASHBOARD
+
+Display:
+
+```text
+Scan ID
+Status
+Started
+Elapsed
+Targets
+Responsive Hosts
+Services
+Certificates
+Observations
+Errors
+Enrichments
+Findings
+```
+
+Use real telemetry.
+
+---
+
+# 102. SEARCH PAGE
+
+Build:
+
+```text
+Search Bar
+Advanced Query Builder
+Saved Searches
+Recent Searches
+Search History
+```
+
+Results should be fast and paginated.
+
+---
+
+# 103. ASSET DETAILS PAGE
+
+Create:
+
+```text
+Overview
+Services
+Domains
+DNS
+Certificates
+TLS
+Threat Intel
+Malware
+C2
+History
+Timeline
+Graph
+Vulnerabilities
+Crypto
+Quantum
+Evidence
+Cases
+```
+
+---
+
+# 104. CERTIFICATE DETAILS PAGE
+
+Create:
+
+```text
+Certificate Summary
+Subject
+Issuer
+Validity
+Algorithms
+SANs
+Trust
+Lint
+CT
+Observed Hosts
+Observed Domains
+Historical Timeline
+Threat Associations
+Graph
+```
+
+---
+
+# 105. DOMAIN DETAILS PAGE
+
+Create:
+
+```text
+Overview
+DNS
+WHOIS/RDAP
+Historical IPs
+Certificates
+Hosts
+Services
+Threat Intel
+Malware
+C2
+Timeline
+Graph
+```
+
+---
+
+# 106. IP DETAILS PAGE
+
+Create:
+
+```text
+IP Overview
+ASN
+Prefix
+Provider
+Geo
+RDNS
+Ports
+Services
+TLS
+Certificates
+Domains
+Threat Intelligence
+Malware
+C2
+VPN/Proxy/Tor
+History
+Timeline
+Graph
+Cases
+```
+
+---
+
+# 107. CASE INVESTIGATION VIEW
+
+Layout:
+
+```text
+Case Summary
+ ├── Evidence
+ ├── IOCs
+ ├── Timeline
+ ├── Graph
+ ├── Related Hosts
+ ├── Related Domains
+ ├── Malware
+ ├── C2
+ ├── Threat Intelligence
+ └── Analyst Notes
+```
+
+---
+
+# 108. PERFORMANCE REQUIREMENTS
+
+The system must support horizontal scaling.
+
+Workers should be stateless where practical.
+
+Use:
+
+```text
+queue-based execution
+partitioned workloads
+batch processing
+streaming ingestion
+bulk inserts
+bulk indexing
+```
+
+Do not process millions of observations through synchronous HTTP requests.
+
+---
+
+# 109. LARGE DATASET DESIGN
+
+Design for eventual scale:
+
+```text
+10K observations
+100K
+1M
+10M
+100M+
+```
+
+without rewriting the entire product.
+
+Use lifecycle policies.
+
+---
+
+# 110. RETENTION
+
+Configurable:
+
+```text
+raw observation retention
+normalized observation retention
+historical retention
+threat intelligence retention
+evidence retention
+audit retention
+```
+
+Different tenants may have different retention requirements.
+
+---
+
+# 111. PRIVACY
+
+Minimize unnecessary personal information.
+
+Do not create people-focused dossiers from public infrastructure metadata.
+
+The platform is for:
+
+```text
+systems
+services
+infrastructure
+threat indicators
+campaigns
+security investigations
+```
+
+not arbitrary personal surveillance.
+
+---
+
+# 112. LEGAL / OPERATIONAL CONTROLS
+
+Add in-product acknowledgement that Internet measurement must be authorized and appropriately governed.
+
+For customer scans:
+
+```text
+Authorization Required
+```
+
+before launch.
+
+For Internet-scale measurement:
+
+```text
+Administrator Approval Required
+```
+
+and maintain:
+
+```text
+scope
+purpose
+operator
+authorization
+rate policy
+blocklist
+audit trail
+```
+
+---
+
+# 113. PRODUCT MODES
+
+Support:
+
+### Analyst Mode
+
+IOC and investigation-oriented.
+
+### SOC Mode
+
+Continuous monitoring and alerting.
+
+### DFIR Mode
+
+Timeline and evidence-oriented.
+
+### ASM Mode
+
+Organization attack-surface inventory.
+
+### Research Mode
+
+Controlled Internet measurement.
+
+### Executive Mode
+
+High-level risk and exposure.
+
+---
+
+# 114. INTEGRATION WITH EXISTING QGUARD SENTINEL
+
+All Internet Intelligence assets should be visible to existing:
+
+```text
+Assets
+Vulnerabilities
+Findings
+Risk
+Cases
+Reports
+Threat Intel
+DFIR
+Monitoring
+```
+
+Do not create isolated asset records.
+
+Build a unified asset identity model wherever feasible.
+
+---
+
+# 115. UNIFIED ASSET IDENTITY
+
+A logical asset may have:
+
+```text
+IP
+Domain
+Certificate
+Cloud Asset
+Web Application
+Mobile Backend
+API
+Container
+Service
+```
+
+Qguard Sentinel should be able to recognize relationships among them.
+
+---
+
+# 116. PUBLIC-SCAN INTEGRATION
+
+Where the existing Qguard Sentinel `/public-scan` functionality is present:
+
+Integrate Internet Intelligence as an optional backend capability.
+
+For public scans:
+
+- enforce existing plan/usage limits,
+- retain authorization requirements,
+- avoid unrestricted Internet-wide scanning,
+- use safe scanning profiles,
+- provide clear scope,
+- clearly distinguish customer-owned scans from Internet research.
+
+---
+
+# 117. SUBDOMAIN INTELLIGENCE
+
+Integrate with existing public-scan/subdomain functionality.
+
+Pipeline:
+
+```text
+Root Domain
+ ↓
+Known Subdomains
+ ↓
+DNS
+ ↓
+IP
+ ↓
+Service Discovery
+ ↓
+TLS
+ ↓
+HTTP
+ ↓
+Threat Intelligence
+ ↓
+C2 / Malware Correlation
+```
+
+Do not duplicate existing subdomain discovery engines.
+
+---
+
+# 118. QUANTUM THREAT CORRELATION
+
+Where public assets use legacy cryptographic primitives:
+
+```text
+RSA
+ECC
+ECDH
+ECDSA
+DH
+```
+
+correlate with:
+
+```text
+Harvest Now, Decrypt Later
+Quantum Risk
+PQC Migration Readiness
+```
+
+Do not overstate exposure.
+
+A publicly observable classical algorithm does not automatically mean exploitation is occurring.
+
+---
+
+# 119. DETECTION TAXONOMY
+
+Use standardized categories:
+
+```text
+DISCOVERY
+EXPOSURE
+VULNERABILITY
+CONFIGURATION
+CRYPTOGRAPHY
+QUANTUM
+THREAT_INTELLIGENCE
+MALWARE
+C2
+ANONYMIZATION
+INFRASTRUCTURE
+DNS
+TLS
+CERTIFICATE
+HTTP
+DFIR
+CAMPAIGN
+```
+
+---
+
+# 120. SEVERITY
+
+Use:
+
+```text
+INFO
+LOW
+MEDIUM
+HIGH
+CRITICAL
+```
+
+but keep:
+
+```text
+severity
+confidence
+```
+
+separate.
+
+A finding can be:
+
+```text
+HIGH severity
+LOW confidence
+```
+
+or:
+
+```text
+MEDIUM severity
+HIGH confidence
+```
+
+---
+
+# 121. EVIDENCE CONFIDENCE
+
+Standardize:
+
+```text
+0-20 = Very Low
+21-40 = Low
+41-60 = Moderate
+61-80 = High
+81-100 = Very High
+```
+
+This is confidence, not maliciousness.
+
+Do not call a 90 confidence correlation automatically "critical".
+
+---
+
+# 122. SEARCH SECURITY
+
+Protect the search endpoint from:
+
+- injection
+- query abuse
+- expensive unrestricted graph traversals
+- recursive explosion
+- huge export requests
+- unauthorized cross-tenant queries
+
+Implement:
+
+```text
+query validation
+query cost estimation
+timeouts
+result limits
+pagination
+rate limits
+tenant scoping
+```
+
+---
+
+# 123. API SECURITY
+
+All new APIs must follow existing Qguard Sentinel security conventions.
+
+Require:
+
+```text
+authenticated user
+tenant context
+RBAC
+server-side authorization
+input validation
+rate limiting
+audit logging
+```
+
+---
+
+# 124. DATABASE SECURITY
+
+Use:
+
+```text
+RLS
+least privilege
+server-side service accounts
+read/write role separation
+encrypted transport
+secrets management
+```
+
+Never expose administrative database credentials to the frontend.
+
+---
+
+# 125. FRONTEND SECURITY
+
+Never expose:
+
+```text
+scanner credentials
+threat-feed secrets
+provider API keys
+database credentials
+worker credentials
+```
+
+in browser code.
+
+---
+
+# 126. TESTING STRATEGY
+
+Create:
+
+### Unit Tests
+
+- parsers
+- normalizers
+- scoring
+- fingerprints
+- IOC normalization
+- rule engine
+- query parser
+
+### Integration Tests
+
+- ZMap pipeline
+- ZGrab2 pipeline
+- DNS
+- TLS
+- certificate pipeline
+- threat-intel providers
+- database
+- search
+- graph
+
+### End-to-End Tests
+
+```text
+Create scan
+ ↓
+Execute
+ ↓
+Observe
+ ↓
+Enrich
+ ↓
+Store
+ ↓
+Search
+ ↓
+Detect
+ ↓
+Alert
+ ↓
+Investigate
+ ↓
+Report
+```
+
+---
+
+# 127. SECURITY TESTING
+
+Perform:
+
+- SAST
+- dependency scanning
+- secret scanning
+- API security testing
+- authorization testing
+- tenant isolation tests
+- RLS tests
+- injection tests
+- query parser tests
+- rate-limit tests
+- worker isolation tests
+- evidence integrity tests
+
+---
+
+# 128. FAILURE TESTING
+
+Simulate:
+
+```text
+ZMap unavailable
+ZGrab unavailable
+DNS unavailable
+database unavailable
+OpenSearch unavailable
+graph database unavailable
+threat feed unavailable
+queue unavailable
+worker crash
+partial scan
+network timeout
+provider timeout
+```
+
+The application must fail gracefully.
+
+---
+
+# 129. DEPLOYMENT ARCHITECTURE
+
+Support:
+
+### Local
+
+Docker / local development.
+
+### Staging
+
+Single controlled worker environment.
+
+### Production
+
+Horizontally scalable worker architecture.
+
+Keep frontend/API deployment separate from scan workers where appropriate.
+
+---
+
+# 130. WORKER DEPLOYMENT
+
+Do not run resource-intensive Internet measurement directly inside the browser or frontend server.
+
+Preferred:
+
+```text
+Web App
+  ↓
+API
+  ↓
+Queue
+  ↓
+Worker
+  ↓
+ZMap / ZGrab2
+```
+
+---
+
+# 131. CONTAINERIZATION
+
+Create containers for:
+
+```text
+sentinel-api
+sentinel-web
+sentinel-worker
+sentinel-scan-worker
+sentinel-enrichment-worker
+sentinel-search-worker
+```
+
+only where appropriate.
+
+Do not create dozens of unnecessary microservices.
+
+Use a modular monolith where practical, with worker separation for resource-intensive workloads.
+
+---
+
+# 132. CONFIGURATION
+
+Create centralized configuration:
+
+```text
+SCAN_ENABLED
+SCAN_AUTHORIZATION_REQUIRED
+GLOBAL_SCAN_RATE_LIMIT
+DEFAULT_SCAN_TIMEOUT
+DEFAULT_SCAN_CONCURRENCY
+THREAT_INTEL_ENABLED
+GRAPH_ENABLED
+HISTORICAL_DATA_ENABLED
+SEARCH_BACKEND
+ANALYTICS_BACKEND
+RAW_EVIDENCE_RETENTION
+```
+
+Never hardcode production behavior.
+
+---
+
+# 133. FEATURE FLAGS
+
+Introduce:
+
+```text
+internet_intelligence
+zmap_scanning
+zgrab_scanning
+zdns
+certificate_intelligence
+historical_observations
+graph_intelligence
+c2_engine
+malware_engine
+vpn_proxy_intelligence
+ai_threat_hunter
+quantum_internet_intelligence
+```
+
+Use the existing Qguard Sentinel feature-flag system if one exists.
+
+---
+
+# 134. BILLING / SUBSCRIPTION
+
+Do not bypass existing subscription/usage enforcement.
+
+Potential usage dimensions:
+
+```text
+scan_targets
+scan_jobs
+historical_retention
+search_queries
+exports
+watchlists
+threat_intel_queries
+AI investigations
+```
+
+Keep billing logic separate from scanner logic.
+
+---
+
+# 135. ADMIN OVERRIDE
+
+Super administrators may configure system-level policies, but every override must be audited.
+
+---
+
+# 136. DOCUMENTATION
+
+Create:
+
+```text
+/docs/internet-intelligence
+```
+
+with:
+
+```text
+Architecture
+Scanner setup
+Worker setup
+Authorization
+Scan governance
+Threat intelligence
+Data model
+Search syntax
+Graph model
+Detection rules
+API
+DFIR workflows
+Troubleshooting
+Security
+Deployment
+Operations
+```
+
+---
+
+# 137. DEVELOPER DOCUMENTATION
+
+Create:
+
+```text
+INTERNET_INTELLIGENCE_ARCHITECTURE.md
+INTERNET_INTELLIGENCE_API.md
+INTERNET_INTELLIGENCE_DATA_MODEL.md
+INTERNET_INTELLIGENCE_SECURITY.md
+INTERNET_INTELLIGENCE_OPERATIONS.md
+INTERNET_INTELLIGENCE_DETECTION_RULES.md
+```
+
+Update:
+
+```text
+CLAUDE.md
+AGENTS.md
+```
+
+to include the new subsystem and operational restrictions.
+
+---
+
+# 138. AGENT RULES
+
+When modifying this system:
+
+1. Inspect existing architecture first.
+2. Reuse existing services.
+3. Reuse existing authentication.
+4. Reuse existing asset models.
+5. Reuse existing vulnerability logic.
+6. Reuse existing reporting logic.
+7. Avoid duplicate engines.
+8. Never fabricate findings.
+9. Never silently change existing behavior.
+10. Never bypass tenant isolation.
+11. Never bypass scan authorization.
+12. Never add exploit functionality.
+13. Keep implementations observable.
+14. Add tests for every major change.
+15. Validate the full application after changes.
+
+---
+
+# 139. MIGRATION STRATEGY
+
+Implement in phases.
+
+## PHASE 1 — Foundation
+
+Build:
+
+```text
+database models
+scan authorization
+scan jobs
+worker architecture
+basic ZMap adapter
+basic ZGrab2 adapter
+observation persistence
+basic UI
+```
+
+## PHASE 2 — Service Intelligence
+
+Add:
+
+```text
+LZR
+TLS
+HTTP
+SSH
+service fingerprinting
+certificate intelligence
+```
+
+## PHASE 3 — DNS / Internet Enrichment
+
+Add:
+
+```text
+ZDNS
+RDAP
+ASN
+BGP
+GeoIP
+CT
+```
+
+## PHASE 4 — Search
+
+Add:
+
+```text
+Sentinel Search
+query language
+advanced filters
+asset pages
+```
+
+## PHASE 5 — Historical Intelligence
+
+Add:
+
+```text
+first seen
+last seen
+timelines
+change detection
+historical certificate pivots
+```
+
+## PHASE 6 — Graph
+
+Add:
+
+```text
+Infrastructure Graph
+relationship engine
+pivoting
+visual investigation
+```
+
+## PHASE 7 — Threat Intelligence
+
+Add:
+
+```text
+IOC feeds
+MISP
+VirusTotal or other configured providers
+malware intelligence
+C2 correlations
+```
+
+## PHASE 8 — DFIR
+
+Add:
+
+```text
+cases
+evidence
+timelines
+investigation workflows
+reporting
+STIX/MISP export
+```
+
+## PHASE 9 — AI
+
+Add:
+
+```text
+AI Threat Hunter
+search planning
+graph reasoning
+timeline analysis
+evidence-backed explanations
+```
+
+## PHASE 10 — Quantum Internet Intelligence
+
+Add:
+
+```text
+TLS crypto analysis
+PQC detection
+classical crypto exposure
+quantum exposure
+PQC migration correlation
+```
+
+---
+
+# 140. MVP REQUIREMENTS
+
+The MVP must contain:
+
+```text
+Scan authorization
+ZMap integration
+ZGrab2 integration
+Basic service discovery
+TLS/certificate parsing
+DNS enrichment
+Asset persistence
+Historical first/last seen
+Search
+IP details
+Domain details
+Certificate details
+Threat-intelligence enrichment abstraction
+Infrastructure graph foundation
+C2 correlation foundation
+Watchlists
+Alerts
+Audit logs
+```
+
+Do not release the MVP with fake data.
+
+---
+
+# 141. ENTERPRISE REQUIREMENTS
+
+Enterprise version must additionally support:
+
+```text
+multi-tenancy
+RLS
+RBAC
+distributed workers
+historical observations
+large-scale search
+graph analysis
+threat intelligence providers
+case management
+evidence vault
+STIX/MISP
+advanced alerting
+AI threat hunting
+SOC integration
+SIEM integration
+SOAR integration
+ticketing integration
+long-term retention
+compliance reporting
+```
+
+---
+
+# 142. SIEM / SOAR INTEGRATION
+
+Provide integration abstractions for:
+
+```text
+Splunk
+Microsoft Sentinel
+Elastic
+QRadar
+Syslog
+Webhook
+Kafka
+```
+
+and SOAR-style outbound events.
+
+Do not require every integration to exist for MVP.
+
+---
+
+# 143. WEBHOOK EVENTS
+
+Create events:
+
+```text
+scan.started
+scan.completed
+scan.failed
+asset.discovered
+service.discovered
+certificate.changed
+dns.changed
+threat.detected
+c2.detected
+malware.associated
+watchlist.matched
+infrastructure.changed
+case.created
+```
+
+---
+
+# 144. EVENT SCHEMA
+
+Every event:
+
+```text
+event_id
+event_type
+timestamp
+tenant_id
+source
+asset
+severity
+confidence
+data
+schema_version
+correlation_id
+```
+
+---
+
+# 145. DATA QUALITY ENGINE
+
+Create:
+
+# Sentinel Data Quality Engine™
+
+Detect:
+
+```text
+duplicate observation
+invalid IP
+invalid domain
+invalid certificate
+stale enrichment
+missing timestamps
+inconsistent relationships
+parser anomalies
+impossible dates
+conflicting ASN
+```
+
+Do not allow low-quality data to silently enter the intelligence graph.
+
+---
+
+# 146. SOURCE RELIABILITY
+
+Each provider should have metadata:
+
+```text
+provider
+source_type
+reliability
+freshness
+last_success
+failure_count
+```
+
+Do not treat every intelligence source as equally reliable.
+
+---
+
+# 147. CORRELATION RULE QUALITY
+
+Correlation rules must distinguish:
+
+```text
+Strong evidence
+Moderate evidence
+Weak signal
+Unknown
+```
+
+Examples:
+
+### Strong
+
+Exact certificate fingerprint reuse + independent malicious IOC relationship.
+
+### Moderate
+
+Multiple infrastructure overlaps with temporal correlation.
+
+### Weak
+
+Same ASN alone.
+
+Do not elevate weak signals into strong attribution.
+
+---
+
+# 148. THREAT HUNTING QUERY EXAMPLES
+
+Support workflows such as:
+
+```text
+Find hosts historically presenting certificate X.
+```
+
+```text
+Find domains resolving to IP Y during a specified period.
+```
+
+```text
+Find hosts sharing JARM X.
+```
+
+```text
+Find services with a specific TLS fingerprint.
+```
+
+```text
+Find infrastructure related to IOC X.
+```
+
+```text
+Find infrastructure changes after date X.
+```
+
+```text
+Find assets associated with malware hash X.
+```
+
+```text
+Find C2 candidates with multiple independent evidence sources.
+```
+
+---
+
+# 149. EXECUTIVE DASHBOARD
+
+Executives should not see raw scanner output.
+
+Show:
+
+```text
+Internet Exposure
+Threat Infrastructure
+C2 Risk
+Malware Infrastructure
+Attack Surface
+Critical Changes
+Quantum Exposure
+Investigation Activity
+Trend
+```
+
+with drill-down.
+
+---
+
+# 150. ANALYST DASHBOARD
+
+Analysts should see:
+
+```text
+IOC Queue
+New Infrastructure
+C2 Candidates
+Malware Relationships
+Certificate Changes
+DNS Changes
+Watchlist Alerts
+Threat Hunts
+Open Cases
+```
+
+---
+
+# 151. DFIR DASHBOARD
+
+Show:
+
+```text
+Active Investigations
+New IOCs
+Infrastructure Pivots
+Historical Changes
+Evidence
+Campaign Relationships
+C2
+Malware
+Timeline
+```
+
+---
+
+# 152. NO DARK-PATTERN ATTRIBUTION
+
+Never use UI wording such as:
+
+```text
+Hacker Identified
+Attacker Located
+VPN Broken
+Anonymous Actor Exposed
+```
+
+unless independently and authoritatively proven in the specific case.
+
+Prefer:
+
+```text
+Infrastructure Associated
+Potential Infrastructure Relationship
+Observed VPN/Proxy Infrastructure
+Potential C2
+Threat Intelligence Match
+Attribution Assessment
+```
+
+---
+
+# 153. ACCESSIBILITY
+
+The new UI must remain consistent with the existing Qguard Sentinel design.
+
+Support:
+
+- keyboard navigation
+- responsive layouts
+- readable data tables
+- accessible graphs where possible
+- screen-reader labels
+- dark/light themes if existing system supports them
+
+---
+
+# 154. UX REQUIREMENTS
+
+Do not overwhelm analysts with thousands of indicators.
+
+Use:
+
+```text
+overview
+progressive disclosure
+filters
+search
+relationship expansion
+evidence panels
+timeline
+```
+
+The graph should support both:
+
+```text
+high-level investigation
+deep technical analysis
+```
+
+---
+
+# 155. OBSERVATION CONFIDENCE
+
+Each observation must distinguish:
+
+```text
+Observed directly
+Derived
+Enriched
+Correlated
+Third-party reported
+Analyst verified
+```
+
+This distinction must be visible in the UI.
+
+---
+
+# 156. AI SAFETY
+
+AI must never:
+
+- invent scan results,
+- fabricate attribution,
+- generate fake threat intelligence,
+- claim successful VPN bypass,
+- claim access to systems not actually observed,
+- invent malware behavior,
+- fabricate source citations.
+
+AI answers must contain actual evidence references.
+
+---
+
+# 157. AUTOMATED QUALITY GATES
+
+Before declaring the feature complete:
+
+```text
+Typecheck
+Lint
+Unit Tests
+Integration Tests
+E2E Tests
+Database Migration Tests
+RLS Tests
+API Authorization Tests
+Security Tests
+Build
+Deployment Validation
+Browser Verification
+```
+
+If the current project has an existing verification pipeline, use it.
+
+---
+
+# 158. BROWSER VERIFICATION
+
+After frontend implementation:
+
+1. Start the application.
+2. Verify the new pages load.
+3. Verify navigation.
+4. Verify search.
+5. Verify scan creation.
+6. Verify scan status.
+7. Verify asset details.
+8. Verify graph.
+9. Verify timeline.
+10. Verify alerts.
+11. Verify no console errors.
+12. Verify no broken routes.
+13. Verify responsive layout.
+
+---
+
+# 159. PERFORMANCE VALIDATION
+
+Measure:
+
+```text
+API latency
+search latency
+graph query latency
+scan-job latency
+queue latency
+database latency
+indexing latency
+```
+
+Do not optimize based on guesses.
+
+Use actual telemetry.
+
+---
+
+# 160. PRODUCTION READINESS
+
+Before deployment verify:
+
+```text
+environment variables
+secrets
+database migrations
+RLS
+RBAC
+worker configuration
+queue configuration
+scanner dependencies
+storage
+search
+observability
+logging
+alerts
+backups
+retention
+rate limits
+blocklists
+authorization
+```
+
+---
+
+# 161. DEPLOYMENT SAFETY
+
+The deployment must:
+
+- preserve existing functionality,
+- preserve database data,
+- use reversible migrations,
+- permit rollback,
+- avoid breaking existing API routes,
+- avoid downtime where practical.
+
+---
+
+# 162. IMPLEMENTATION RULE
+
+Do not respond:
+
+> "This would require substantial development."
+
+Actually implement the feature.
+
+Do not merely generate:
+
+- placeholder pages,
+- mock APIs,
+- TODO comments,
+- fake scanner results,
+- stubbed dashboards.
+
+When a dependency is unavailable, create an explicit adapter interface and provide a working local implementation or documented integration boundary rather than faking production results.
+
+---
+
+# 163. WHEN A COMPONENT IS NOT AVAILABLE
+
+Example:
+
+```text
+OpenSearch not installed
+```
+
+Do not fabricate OpenSearch results.
+
+Implement:
+
+```text
+SearchRepository interface
+```
+
+and use the existing database backend for the working MVP.
+
+Do the same for:
+
+```text
+Neo4j
+ClickHouse
+MISP
+VirusTotal
+commercial TI feeds
+```
+
+---
+
+# 164. RECOMMENDED INTERNAL PACKAGE STRUCTURE
+
+Adapt to the existing repository, but a logical structure is:
+
+```text
+src/
+  internet-intelligence/
+    discovery/
+    zmap/
+    zgrab/
+    zdns/
+    lzr/
+    crypto/
+    certificates/
+    enrichment/
+    intelligence/
+    correlation/
+    c2/
+    malware/
+    attribution/
+    history/
+    graph/
+    search/
+    detections/
+    watches/
+    alerts/
+    cases/
+    evidence/
+    reporting/
+    ai/
+    governance/
+    authorization/
+    audit/
+```
+
+Do not blindly create this exact structure if the existing architecture uses a different organization.
+
+Follow current repository conventions.
+
+---
+
+# 165. FINAL UI ROUTES
+
+Where compatible with the current application, implement:
+
+```text
+/dashboard/internet-intelligence
+/dashboard/internet-intelligence/search
+/dashboard/internet-intelligence/scans
+/dashboard/internet-intelligence/hosts
+/dashboard/internet-intelligence/domains
+/dashboard/internet-intelligence/certificates
+/dashboard/internet-intelligence/services
+/dashboard/internet-intelligence/threats
+/dashboard/internet-intelligence/c2
+/dashboard/internet-intelligence/malware
+/dashboard/internet-intelligence/campaigns
+/dashboard/internet-intelligence/graph
+/dashboard/internet-intelligence/timeline
+/dashboard/internet-intelligence/watchlists
+/dashboard/internet-intelligence/alerts
+/dashboard/internet-intelligence/cases
+/dashboard/internet-intelligence/evidence
+/dashboard/internet-intelligence/settings
+```
+
+Reconcile these with existing Qguard Sentinel routes before implementation.
+
+---
+
+# 166. FINAL ACCEPTANCE CRITERIA
+
+The implementation is considered complete only when:
+
+### Discovery
+
+- ZMap integration works.
+- Scan authorization works.
+- Scope controls work.
+- Blocklists work.
+- Rate controls work.
+- Scan jobs are observable.
+
+### Service Intelligence
+
+- ZGrab2 integration works.
+- Service classification works.
+- TLS works.
+- HTTP works.
+- Certificate parsing works.
+- DNS intelligence works.
+
+### Data
+
+- Observations are persisted.
+- Provenance is preserved.
+- Historical observations work.
+- First/last seen works.
+- Duplicate suppression works.
+
+### Intelligence
+
+- Threat feeds can be integrated.
+- IOC repository works.
+- C2 correlation works.
+- Malware correlation works.
+- Infrastructure clustering works.
+- Attribution assessments show evidence and uncertainty.
+
+### Investigation
+
+- Search works.
+- Graph works.
+- Timeline works.
+- Watchlists work.
+- Alerts work.
+- Cases work.
+- Evidence export works.
+
+### Qguard Integration
+
+- Existing assets are reused.
+- Existing findings are correlated.
+- Existing risk engine is reused.
+- Existing vulnerability engine is reused.
+- Existing DFIR workflows are integrated.
+- Existing quantum-security workflows are integrated.
+- No duplicate/fake metrics exist.
+
+### Security
+
+- Authentication works.
+- Authorization works.
+- RLS/tenant isolation works.
+- Audit logging works.
+- API security works.
+- Rate limiting works.
+- Scanner governance works.
+
+### Quality
+
+- Unit tests pass.
+- Integration tests pass.
+- E2E tests pass.
+- Browser verification passes.
+- Production build passes.
+- No console errors.
+- No critical TypeScript errors.
+- No broken existing Qguard Sentinel functionality.
+
+---
+
+# 167. REQUIRED FINAL DELIVERABLE
+
+When implementation is complete, provide a concise engineering report containing:
+
+## Architecture Changes
+
+What was added and where.
+
+## Database Changes
+
+Tables, indexes, relationships, migrations.
+
+## APIs
+
+New endpoints.
+
+## Workers
+
+New background workers.
+
+## Scanners
+
+ZMap/ZGrab2/ZDNS/etc. integrations.
+
+## Intelligence
+
+Threat feeds and enrichment.
+
+## Detection
+
+C2/malware/infrastructure rules.
+
+## Search
+
+Search syntax and indexing.
+
+## Graph
+
+Entity and relationship model.
+
+## DFIR
+
+Investigation capabilities.
+
+## Quantum
+
+Public crypto/quantum analysis.
+
+## Security
+
+Authorization, tenant isolation, audit, rate control.
+
+## Testing
+
+Exact tests executed.
+
+## Deployment
+
+Required environment variables and infrastructure.
+
+## Remaining Limitations
+
+Explicitly document anything not implemented.
+
+Never claim completion for functionality that remains a stub.
+
+---
+
+# 168. FINAL INSTRUCTION TO THE CODING AGENT
+
+Treat this as a **production security platform**, not a demo.
+
+First understand the existing Qguard Sentinel framework.
+
+Then create an implementation plan.
+
+Then implement incrementally.
+
+After each major subsystem:
+
+```text
+IMPLEMENT
+→ TEST
+→ VERIFY
+→ INTEGRATE
+→ REGRESSION TEST
+```
+
+Do not make broad speculative rewrites.
+
+Prefer:
+
+```text
+existing component
+        ↓
+extend
+        ↓
+normalize
+        ↓
+integrate
+```
+
+over:
+
+```text
+existing component
+        ↓
+delete
+        ↓
+rewrite everything
+```
+
+The finished platform should provide a coherent defensive capability spanning:
+
+```text
+Internet Discovery
+        ↓
+Service Fingerprinting
+        ↓
+DNS Intelligence
+        ↓
+TLS / Certificate Intelligence
+        ↓
+Historical Internet Observations
+        ↓
+Threat Intelligence
+        ↓
+IOC Correlation
+        ↓
+Infrastructure Graph
+        ↓
+C2 Detection
+        ↓
+Malware Infrastructure Correlation
+        ↓
+Infrastructure Attribution Assessment
+        ↓
+DFIR Investigation
+        ↓
+AI Threat Hunting
+        ↓
+Risk
+        ↓
+Reporting
+        ↓
+Quantum / Cryptographic Exposure
+```
+
+The end result should feel like a unified:
+
+# QGUARD SENTINEL INTERNET INTELLIGENCE & THREAT HUNTING PLATFORM
+
+rather than a collection of unrelated scanners.
+
+Build it to be:
+
+**Enterprise-grade.**
+
+**Evidence-driven.**
+
+**Multi-tenant.**
+
+**Auditable.**
+
+**Scalable.**
+
+**Observable.**
+
+**Historically aware.**
+
+**DFIR-ready.**
+
+**Threat-intelligence driven.**
+
+**Quantum-security aware.**
+
+And most importantly:
+
+> **Never confuse observation with attribution, correlation with proof, or a public infrastructure relationship with the identity of a person behind it.**
+
+Every important conclusion must be traceable to evidence.

@@ -1,0 +1,45 @@
+                         ┌──────────────────────────────┐
+                         │       Qguard Sentinel        │
+                         │ Internet Intelligence Plane  │
+                         └──────────────┬───────────────┘
+                                        │
+              ┌─────────────────────────┼─────────────────────────┐
+              │                         │                         │
+       DISCOVERY PLANE            FINGERPRINT PLANE          INTEL PLANE
+              │                         │                         │
+          ZMap Engine                ZGrab2                 Threat Intel
+          IPv4 / IPv6                Nmap*                  Malware IOCs
+          TCP / UDP                  TLS/JARM               C2 Feeds
+          DNS                        HTTP                   CT Logs
+          Service Discovery          SSH                    WHOIS/RDAP
+          Port Discovery             SMTP                   Passive DNS
+              │                      MQTT                   ASN/BGP
+              │                      DNS                    GeoIP
+              └──────────────┬──────────────┴──────────────────────┘
+                             │
+                       NORMALIZATION
+                             │
+                    ┌────────▼────────┐
+                    │ Asset Knowledge │
+                    │     Graph       │
+                    └────────┬────────┘
+                             │
+        ┌────────────────────┼─────────────────────┐
+        │                    │                     │
+   THREAT DETECTION      CORRELATION          INVESTIGATION
+        │                    │                     │
+   C2 Detection         IP ↔ Domain           Pivot Search
+   Malware Infra        Domain ↔ Cert         Timeline
+   Botnet Detection     Cert ↔ IP             Infrastructure Graph
+   Phishing Infra       ASN ↔ IP               Evidence
+   Ransomware Infra     IP ↔ C2                Attribution
+   Scanner Detection    Hash ↔ Malware
+        │                    │
+        └────────────────────┼────────────────────┘
+                             │
+                     RISK / CONFIDENCE
+                             │
+                  ┌──────────▼──────────┐
+                  │ Threat Intelligence │
+                  │     Dashboard       │
+                  └─────────────────────┘
