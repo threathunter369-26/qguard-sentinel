@@ -57,6 +57,10 @@ ignore = [
 "services/api/qguard/common/enums.py" = ["S105"]
 "services/api/qguard/auth/permissions.py" = ["S105"]
 "services/api/qguard/auth/tokens.py" = ["S105"]
+# The secret-detection rule pack names credential types as keyword arguments
+# (secret_type="aws_access_key_id", ...). S105/S106 flag the label, not a
+# credential: describing credential shapes is this module's entire purpose.
+"services/scanner/qguard_scanner/rules/secret_patterns.py" = ["S105", "S106"]
 "services/scanner/qguard_scanner/rules/**" = ["E501"]
 "services/scanner/qguard_scanner/engines/**" = ["S310", "S608"]
 

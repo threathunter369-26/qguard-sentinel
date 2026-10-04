@@ -195,7 +195,19 @@ class Role(Base, UUIDPrimaryKeyMixin, TimestampMixin):
 
 
 class RolePermission(Base, TimestampMixin):
+    """Join row granting one permission to one role.
+
+    Has no ``org_id`` of its own, so it carries no row level security policy:
+    access is governed by the parent role's policy.
+    """
+
     __tablename__ = "role_permissions"
+    __table_args__ = {
+        "comment": (
+            "Child of roles. Access is governed by the parent role's policy; "
+            "this table has no org_id of its own."
+        )
+    }
 
     role_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("roles.id", ondelete="CASCADE"), primary_key=True

@@ -16,10 +16,13 @@ Both layers are exercised by the tenant-isolation test suite.
 
 from __future__ import annotations
 
+import json
 import uuid
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import date, datetime, time, timedelta
+from decimal import Decimal
+from enum import Enum
 from typing import Any
 
 from sqlalchemy import DateTime, ForeignKey, MetaData, String, event, func, text
@@ -127,6 +130,45 @@ class AuthorMixin:
     updated_by: Mapped[uuid.UUID | None] = mapped_column(PGUUID(as_uuid=True), default=None)
 
 
+def _json_default(value: Any) -> Any:
+    """Serialise the types that legitimately appear inside JSONB payloads.
+
+    Evidence, risk factor breakdowns, scope decisions and engine statistics are
+    all stored as JSONB and are assembled from live domain objects, so they
+    routinely contain datetimes, UUIDs, Decimals, sets and enums. The stdlib
+    encoder rejects all of those, and the resulting failure surfaces deep inside
+    a flush where the cause is hard to see — so the serializer handles them
+    once, here, rather than every call site remembering to pre-convert.
+    """
+    if isinstance(value, datetime):
+        return value.isoformat()
+    if isinstance(value, (date, time)):
+        return value.isoformat()
+    if isinstance(value, uuid.UUID):
+        return str(value)
+    if isinstance(value, Decimal):
+        # float() keeps the value usable in JSON; the authoritative copy stays
+        # in its own numeric column.
+        return float(value)
+    if isinstance(value, timedelta):
+        return value.total_seconds()
+    if isinstance(value, (set, frozenset)):
+        return sorted(value, key=str)
+    if isinstance(value, bytes):
+        return value.decode("utf-8", errors="replace")
+    if isinstance(value, Enum):
+        return value.value
+    if hasattr(value, "isoformat"):
+        return value.isoformat()
+    if hasattr(value, "__dict__"):
+        return {k: v for k, v in vars(value).items() if not k.startswith("_")}
+    return str(value)
+
+
+def json_serializer(value: Any) -> str:
+    return json.dumps(value, default=_json_default, separators=(",", ":"))
+
+
 #: PostgreSQL ``uuid[]`` column type, used for denormalised id lists where a
 #: join table would add cost without adding meaning (e.g. a scan's target ids).
 UUIDArray = ARRAY(PGUUID(as_uuid=True))
@@ -148,6 +190,7 @@ def create_engine(url: str | None = None, **overrides: Any) -> AsyncEngine:
         "echo": settings.database_echo,
         "pool_pre_ping": True,
         "future": True,
+        "json_serializer": json_serializer,
     }
     if settings.env == "test":
         # Tests manage their own transactional boundaries; pooling across event

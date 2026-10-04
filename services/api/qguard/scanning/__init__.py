@@ -1,0 +1,1 @@
+"""QGuard Sentinel platform module."""
