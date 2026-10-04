@@ -47,7 +47,7 @@ from qguard.common.cryptoutil import (
     hash_token,
     verify_password,
 )
-from qguard.common.database import apply_tenant_context
+from qguard.common.database import affected_rows, apply_tenant_context
 from qguard.common.enums import ActorType, AuditResult, SecurityEventKind, UserStatus
 from qguard.common.errors import (
     AuthenticationError,
@@ -505,7 +505,7 @@ class AuthService:
             )
             .values(revoked_at=datetime.now(UTC), revoked_reason=reason)
         )
-        return int(result.rowcount or 0)
+        return affected_rows(result)
 
     async def logout(self, principal: Principal, *, all_sessions: bool = False) -> int:
         if principal.user_id is None:
@@ -522,7 +522,7 @@ class AuthService:
         if not all_sessions and principal.session_id:
             stmt = stmt.where(UserSession.id == principal.session_id)
         result = await self.session.execute(stmt)
-        count = int(result.rowcount or 0)
+        count = affected_rows(result)
         await self.audit.record(
             action=AuditAction.LOGOUT,
             org_id=principal.org_id,
@@ -620,7 +620,7 @@ class AuthService:
             actor=principal,
             resource_type="user",
             resource_id=user.id,
-            metadata={"other_sessions_revoked": int(revoked.rowcount or 0)},
+            metadata={"other_sessions_revoked": affected_rows(revoked)},
         )
 
     # -------------------------------------------------------------------- MFA

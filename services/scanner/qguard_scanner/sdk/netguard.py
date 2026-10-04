@@ -106,6 +106,7 @@ def parse_target(target: str, *, default_scheme: str | None = None) -> TargetInf
     if not target:
         raise UnsafeTargetError("An empty target cannot be assessed.")
 
+    scheme: str | None
     if "://" in target:
         parsed = urlparse(target)
         scheme = (parsed.scheme or "").lower()
@@ -203,7 +204,9 @@ def resolve_host(host: str) -> list[str]:
         raise UnsafeTargetError(f"DNS resolution failed for {host!r}: {detail}") from exc
     addresses: list[str] = []
     for info in infos:
-        addr = info[4][0]
+        # sockaddr[0] is the address; it is typed loosely because the tuple
+        # shape differs between address families.
+        addr = str(info[4][0])
         if addr not in addresses:
             addresses.append(addr)
     if not addresses:

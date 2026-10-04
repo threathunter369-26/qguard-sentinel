@@ -23,9 +23,19 @@ from contextlib import asynccontextmanager
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from enum import Enum
-from typing import Any
+from typing import Any, cast
 
-from sqlalchemy import DateTime, ForeignKey, MetaData, String, event, func, text
+from sqlalchemy import (
+    CursorResult,
+    DateTime,
+    ForeignKey,
+    MetaData,
+    Result,
+    String,
+    event,
+    func,
+    text,
+)
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.ext.asyncio import (
@@ -311,3 +321,14 @@ async def healthcheck(session: AsyncSession) -> dict[str, Any]:
         "connected": result.scalar() == 1,
         "schema_version": migration.scalar(),
     }
+
+
+def affected_rows(result: Result[Any]) -> int:
+    """How many rows a DML statement changed.
+
+    ``AsyncSession.execute`` is typed as returning :class:`Result`, which does
+    not declare ``rowcount``; that attribute belongs to ``CursorResult``, which
+    is what an ``INSERT``/``UPDATE``/``DELETE`` actually returns. The cast
+    records that reasoning in one place rather than at every call site.
+    """
+    return int(cast("CursorResult[Any]", result).rowcount or 0)

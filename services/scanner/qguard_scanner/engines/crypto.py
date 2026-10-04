@@ -609,7 +609,7 @@ class CryptoEngine(SecurityEngine):
                     "of trust need the longest lead time to replace."
                 )
             ),
-            severity=severity,  # type: ignore[arg-type]
+            severity=severity,
             confidence="high",
             cwe="CWE-327",
             owasp_top10="A02:2021",
@@ -767,7 +767,7 @@ class CryptoEngine(SecurityEngine):
                 readiness["explanation"]
                 + (" " + " ".join(readiness.get("notes", [])) if readiness.get("notes") else "")
             ),
-            severity=severity,  # type: ignore[arg-type]
+            severity=severity,
             confidence="medium",
             cwe="CWE-327",
             impact=(

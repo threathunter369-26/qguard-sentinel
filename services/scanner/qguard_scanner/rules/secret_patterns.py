@@ -403,8 +403,19 @@ PLACEHOLDER_PATTERNS: tuple[re.Pattern[str], ...] = (
     _c(r"(?i)^(?:x{6,}|y{6,}|z{6,}|a{6,}|0{6,}|1{6,}|\*{6,}|\.{3,})$"),
     _c(r"(?i)^(?:your|my|the|example|sample|test|dummy|fake|placeholder)[_\-]"),
     _c(r"(?i)(?:example|placeholder|redacted|removed|sanitized)\.(?:com|org|net|local)"),
-    _c(r"^(?:[A-Za-z]+_){2,}[A-Za-z]+$"),  # snake_case_identifier
-    _c(r"(?i)^(?:true|false|enabled|disabled|localhost|127\.0\.0\.1)$"),
+    _c(r"^(?:[A-Za-z]+_){2,}[A-Za-z]+$"),  # Mixed_Case_Identifier
+    # A pure lowercase snake_case token is an identifier, not a credential:
+    # generated secrets are not spelled in words joined by underscores. This
+    # is what stops a keyword argument such as ``key="known_exploited"`` from
+    # being reported as a high-entropy secret.
+    _c(r"^[a-z][a-z0-9]*(?:_[a-z0-9]+)+$"),
+    # Variable and bind-parameter references: the value is supplied elsewhere,
+    # so the literal here is a name, not a secret.
+    _c(r"^:'[A-Za-z_][A-Za-z0-9_]*'$"),  # psql :'var'
+    _c(r"^:[A-Za-z_][A-Za-z0-9_]*$"),  # :bind_param
+    _c(r"^%\([A-Za-z_][A-Za-z0-9_]*\)s$"),  # %(name)s
+    _c(r"^\{[A-Za-z_][A-Za-z0-9_]*\}$"),  # {name}
+    _c(r"(?i)^(?:true|false|none|null|enabled|disabled|localhost|127\.0\.0\.1)$"),
 )
 
 #: Paths that are examples or fixtures by convention. Findings there are

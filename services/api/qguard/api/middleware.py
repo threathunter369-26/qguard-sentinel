@@ -246,9 +246,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return response
 
         bucket.append(now)
-        response = await call_next(request)
-        response.headers["X-RateLimit-Limit"] = str(limit)
-        response.headers["X-RateLimit-Remaining"] = str(max(0, limit - len(bucket)))
+        passthrough: Response = await call_next(request)
+        passthrough.headers["X-RateLimit-Limit"] = str(limit)
+        passthrough.headers["X-RateLimit-Remaining"] = str(max(0, limit - len(bucket)))
 
         # Keep the dictionary from growing without bound on a long-lived process.
         if len(self._hits) > 20_000:

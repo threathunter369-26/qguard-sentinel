@@ -84,7 +84,7 @@ def scrub(value: Any, _depth: int = 0) -> Any:
                 out[str(key)] = scrub(item, _depth + 1)
         return out
     if isinstance(value, (list, tuple, set)):
-        return type(value)(scrub(item, _depth + 1) for item in value)  # type: ignore[call-arg]
+        return type(value)(scrub(item, _depth + 1) for item in value)
     if isinstance(value, str):
         scrubbed = value
         for pattern in _TOKEN_PATTERNS:
@@ -96,7 +96,12 @@ def scrub(value: Any, _depth: int = 0) -> Any:
 def _redaction_processor(
     _logger: Any, _name: str, event_dict: MutableMapping[str, Any]
 ) -> MutableMapping[str, Any]:
-    return scrub(event_dict)  # type: ignore[return-value]
+    scrubbed = scrub(event_dict)
+    # ``scrub`` returns the same mapping shape it was given, which for an
+    # event dict is a mapping; the assertion makes that explicit for the
+    # processor contract rather than suppressing the check.
+    assert isinstance(scrubbed, MutableMapping)
+    return scrubbed
 
 
 def _context_processor(
@@ -157,4 +162,5 @@ def configure_logging(level: str | None = None, fmt: str | None = None) -> None:
 def get_logger(name: str | None = None) -> structlog.stdlib.BoundLogger:
     if not _configured:
         configure_logging()
-    return structlog.get_logger(name)  # type: ignore[no-any-return]
+    logger: structlog.stdlib.BoundLogger = structlog.get_logger(name)
+    return logger

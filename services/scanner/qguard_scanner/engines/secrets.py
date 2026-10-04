@@ -24,9 +24,6 @@ Design points that matter in practice:
 from __future__ import annotations
 
 import asyncio
-import hashlib
-import hmac
-import math
 import os
 from collections import Counter
 from dataclasses import dataclass, field
@@ -51,8 +48,14 @@ from qguard_scanner.sdk.engine import (
     EngineStatus,
     SecurityEngine,
 )
-from qguard_scanner.sdk.finding import CodeLocation, Evidence, ScanFinding
+from qguard_scanner.sdk.finding import CodeLocation, Evidence, ScanFinding, Severity
 from qguard_scanner.sdk.registry import register_engine
+from qguard_scanner.sdk.secretutil import (
+    DEFAULT_FINGERPRINT_SALT,
+    fingerprint,
+    redact,
+    shannon_entropy,
+)
 
 #: Files larger than this are skipped. A credential lives in configuration or
 #: source, not in a 10 MB generated file, and reading them all would make the
@@ -66,38 +69,34 @@ MAX_LINE_LENGTH = 4096
 MAX_FINDINGS_PER_RULE = 100
 
 
-def shannon_entropy(data: str) -> float:
-    """Shannon entropy in bits per character."""
-    if not data:
-        return 0.0
-    counts = Counter(data)
-    length = len(data)
-    return -sum((c / length) * math.log2(c / length) for c in counts.values())
+#: Severity downgrade applied to a hit found in test or example material.
+#: Reduced rather than suppressed: a real credential does sometimes land in
+#: a fixture, and silently dropping it would be the worse error.
+_REDUCED_SEVERITY: dict[str, Severity] = {
+    "critical": "medium",
+    "high": "low",
+    "medium": "low",
+}
 
 
-def redact(value: str, *, keep_start: int = 4, keep_end: int = 2) -> str:
-    """Produce a non-recoverable preview.
+#: Hosts whose credentials are unreachable from outside the machine.
+_LOOPBACK_HOSTS = ("localhost", "127.0.0.1", "[::1]", "::1", "host.docker.internal")
 
-    Anything short enough to be brute-forced from a prefix and suffix is masked
-    completely.
+
+def _is_loopback_credential(line: str) -> bool:
+    """Whether a matched line is a connection string pointing at this machine.
+
+    A credential for a loopback address is a development default: it cannot be
+    used by anyone who is not already on the host. Treating it with the same
+    severity as a live cloud credential makes the severity scale useless.
     """
-    value = value.strip()
-    if len(value) <= keep_start + keep_end + 4:
-        return "*" * 12
-    return f"{value[:keep_start]}{'*' * 8}{value[-keep_end:]}"
-
-
-def fingerprint(value: str, salt: str) -> str:
-    """Stable, non-reversible identifier for a detected secret.
-
-    Keyed so the digest cannot be matched against a precomputed table of common
-    credentials — an unkeyed hash of a weak password is effectively reversible.
-    """
-    return hmac.new(
-        key=hashlib.sha256(salt.encode("utf-8")).digest(),
-        msg=value.strip().encode("utf-8"),
-        digestmod=hashlib.sha256,
-    ).hexdigest()
+    lowered = line.lower()
+    if "://" not in lowered:
+        return False
+    after_credentials = lowered.rpartition("@")[2]
+    if not after_credentials:
+        return False
+    return any(after_credentials.startswith(host) for host in _LOOPBACK_HOSTS)
 
 
 @dataclass(slots=True)
@@ -166,7 +165,7 @@ class SecretsEngine(SecurityEngine):
         its job heartbeat, which the queue reads as a dead worker — the scan
         would be requeued while it was in fact still running.
         """
-        salt = str(ctx.option("fingerprint_salt", "qguard-secrets"))
+        salt = str(ctx.option("fingerprint_salt", DEFAULT_FINGERPRINT_SALT))
         max_files = int(ctx.option("max_files", 50_000))
         include_examples = bool(ctx.option("include_example_paths", True))
 
@@ -461,11 +460,25 @@ class SecretsEngine(SecurityEngine):
         if hit.in_example_path:
             # Reduced, not suppressed: a real credential does sometimes land in
             # a fixture, and silently dropping it would be the worse error.
-            severity = {"critical": "medium", "high": "low", "medium": "low"}.get(severity, "info")
+            severity = _REDUCED_SEVERITY.get(severity, "info")
             confidence = "low"
             notes.append(
                 "Found in a path that is conventionally test or example material, so the "
                 "severity is reduced. Confirm whether the value is a live credential."
+            )
+
+        if _is_loopback_credential(hit.line_text):
+            # A credential for a loopback address cannot be used by anyone who
+            # is not already on the host, so this is a weak-default finding
+            # rather than an exposed-credential one. Still reported: a default
+            # that ships is a default that reaches production.
+            severity = _REDUCED_SEVERITY.get(severity, "info")
+            notes.append(
+                "The connection string addresses a loopback host, so the credential is a "
+                "local development default rather than one an external attacker could "
+                "use. The severity is reduced accordingly. It is still worth removing: a "
+                "default that ships is a default that reaches an environment where it "
+                "does matter."
             )
 
         detection_method = "pattern+entropy" if rule.min_entropy > 0 else "pattern"

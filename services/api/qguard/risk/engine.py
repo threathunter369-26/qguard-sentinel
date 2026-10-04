@@ -802,8 +802,10 @@ class RiskEngine:
 
             now = datetime.now(UTC)
             for vulnerability in rows:
-                asset = asset_cache.get(vulnerability.asset_id) if vulnerability.asset_id else None
-                assessment = self.assess_vulnerability(vulnerability, asset)
+                cached: Asset | None = (
+                    asset_cache.get(vulnerability.asset_id) if vulnerability.asset_id else None
+                )
+                assessment = self.assess_vulnerability(vulnerability, cached)
                 vulnerability.risk_score = assessment.score
                 vulnerability.risk_factors = assessment.as_dict()
                 vulnerability.risk_calculated_at = now

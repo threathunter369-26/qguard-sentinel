@@ -20,10 +20,12 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+from sqlalchemy import delete as sa_delete
 from sqlalchemy import select, text, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from qguard.common.config import get_settings
+from qguard.common.database import affected_rows
 from qguard.common.enums import JobKind, JobStatus
 from qguard.common.events import EventType, emit
 from qguard.common.logging import get_logger
@@ -407,9 +409,9 @@ class JobQueue:
         settings = get_settings()
         cutoff = datetime.now(UTC) - timedelta(days=retention_days or settings.job_retention_days)
         result = await self.session.execute(
-            Job.__table__.delete().where(
+            sa_delete(Job).where(
                 Job.status.in_([JobStatus.COMPLETED, JobStatus.CANCELLED]),
                 Job.finished_at < cutoff,
             )
         )
-        return int(result.rowcount or 0)
+        return affected_rows(result)

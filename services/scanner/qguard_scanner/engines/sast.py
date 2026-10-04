@@ -1144,8 +1144,8 @@ class SastEngine(SecurityEngine):
             category=rule.category,
             title=f"{rule.name} in {Path(issue.file_path).name}",
             description=f"{issue.detail} {method_note}{taint_note}",
-            severity=severity,  # type: ignore[arg-type]
-            confidence=confidence,  # type: ignore[arg-type]
+            severity=severity,
+            confidence=confidence,
             cwe=rule.cwe,
             owasp_top10=rule.owasp_top10,
             owasp_asvs=list(rule.owasp_asvs),

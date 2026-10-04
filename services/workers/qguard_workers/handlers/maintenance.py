@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+from qguard.common.database import affected_rows
 from qguard.common.enums import (
     OPEN_VULNERABILITY_STATUSES,
     JobKind,
@@ -12,6 +13,7 @@ from qguard.common.enums import (
 from qguard.common.logging import get_logger
 from qguard.risk.engine import RiskEngine, posture_grade
 from qguard.workers.queue import JobQueue
+from sqlalchemy import delete as sa_delete
 from sqlalchemy import func, select
 
 from qguard_workers.registry import JobContext, register_handler
@@ -222,12 +224,12 @@ async def _apply_retention_policies(ctx: JobContext) -> list[dict[str, Any]]:
         affected = 0
         if policy.resource_type == "security_events" and policy.action == "delete":
             result = await ctx.session.execute(
-                SecurityEvent.__table__.delete().where(
+                sa_delete(SecurityEvent).where(
                     SecurityEvent.org_id == ctx.org_id,
                     SecurityEvent.occurred_at < cutoff,
                 )
             )
-            affected = int(result.rowcount or 0)
+            affected = affected_rows(result)
         else:
             # Anything with its own integrity requirements (evidence, the audit
             # trail) is reported rather than touched automatically: deleting it

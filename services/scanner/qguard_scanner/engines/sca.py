@@ -528,7 +528,7 @@ class ScaEngine(SecurityEngine):
                             else f" as a transitive dependency (depth {dependency.depth})."
                         )
                     ),
-                    severity=match.severity,  # type: ignore[arg-type]
+                    severity=match.severity,
                     confidence="high",
                     cve=match.cve,
                     cwe=match.cwe_ids[0] if match.cwe_ids else None,
@@ -604,7 +604,7 @@ class ScaEngine(SecurityEngine):
                         "concern rather than a security vulnerability, and is reported "
                         "separately so the right people see it."
                     ),
-                    severity=severity,  # type: ignore[arg-type]
+                    severity=severity,
                     confidence="medium",
                     remediation=(
                         "Confirm with legal counsel whether this licence is compatible "

@@ -9,7 +9,7 @@ security as well as by the explicit application-level filters.
 from __future__ import annotations
 
 import uuid
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
 from typing import Annotated
 
 from fastapi import Depends, Header, Request
@@ -138,7 +138,9 @@ async def get_audit_service(
 AuditDep = Annotated[AuditService, Depends(get_audit_service)]
 
 
-def require_permission(*permissions: str, require_all: bool = False) -> Callable[..., Principal]:
+def require_permission(
+    *permissions: str, require_all: bool = False
+) -> Callable[..., Awaitable[Principal]]:
     """Dependency factory enforcing one or more permissions.
 
     The check is server-side and unconditional. The frontend also hides

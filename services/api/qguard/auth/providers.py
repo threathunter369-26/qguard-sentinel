@@ -123,7 +123,7 @@ class LocalAuthProvider:
             requires_mfa=candidate.mfa_enabled,
             mfa_secret_encrypted=candidate.mfa_secret_encrypted,
             full_name=candidate.full_name,
-            needs_password_rehash=bool(stored) and password_needs_rehash(stored),
+            needs_password_rehash=bool(stored) and password_needs_rehash(stored or ""),
         )
 
     async def verify_bearer_token(self, token: str) -> dict[str, Any]:
@@ -179,7 +179,12 @@ class SupabaseAuthProvider:
 
     async def verify_bearer_token(self, token: str) -> dict[str, Any]:
         settings = get_settings()
-        options = {"require": ["exp", "sub"], "verify_aud": bool(settings.supabase_jwt_audience)}
+        # PyJWT types its decode options as a TypedDict, so the literal is
+        # annotated rather than inferred as dict[str, object].
+        options: jwt.api_jwt.Options = {
+            "require": ["exp", "sub"],
+            "verify_aud": bool(settings.supabase_jwt_audience),
+        }
 
         try:
             if settings.supabase_jwt_secret:

@@ -11,6 +11,7 @@ from __future__ import annotations
 import uuid
 from datetime import UTC, datetime
 
+from sqlalchemy import delete as sa_delete
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -212,27 +213,27 @@ async def ensure_system_roles(session: AsyncSession) -> dict[str, Role]:
     await session.flush()
 
     roles: dict[str, Role] = {}
-    for spec in SYSTEM_ROLES:
+    for role_spec in SYSTEM_ROLES:
         role = (
             await session.execute(
-                select(Role).where(Role.key == spec.key, Role.is_system.is_(True))
+                select(Role).where(Role.key == role_spec.key, Role.is_system.is_(True))
             )
         ).scalar_one_or_none()
         if role is None:
             role = Role(
                 org_id=None,
-                key=spec.key,
-                name=spec.name,
-                description=spec.description,
+                key=role_spec.key,
+                name=role_spec.name,
+                description=role_spec.description,
                 is_system=True,
-                rank=spec.rank,
+                rank=role_spec.rank,
             )
             session.add(role)
             await session.flush()
         else:
-            role.name = spec.name
-            role.description = spec.description
-            role.rank = spec.rank
+            role.name = role_spec.name
+            role.description = role_spec.description
+            role.rank = role_spec.rank
 
         current = set(
             (
@@ -243,18 +244,18 @@ async def ensure_system_roles(session: AsyncSession) -> dict[str, Role]:
             .scalars()
             .all()
         )
-        for key in spec.permissions - current:
+        for key in role_spec.permissions - current:
             session.add(RolePermission(role_id=role.id, permission_key=key))
         # Permissions removed from a system role's definition are withdrawn, so
         # a tightened default actually takes effect on upgrade.
-        for key in current - spec.permissions:
+        for key in current - role_spec.permissions:
             await session.execute(
-                RolePermission.__table__.delete().where(
+                sa_delete(RolePermission).where(
                     RolePermission.role_id == role.id,
                     RolePermission.permission_key == key,
                 )
             )
-        roles[spec.key] = role
+        roles[role_spec.key] = role
 
     await session.flush()
     # Lower the flag explicitly rather than relying on the transaction ending,

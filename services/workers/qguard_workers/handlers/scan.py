@@ -27,7 +27,13 @@ from qguard.models.scanning import ScanEngineRun
 from qguard.risk.engine import RiskEngine
 from qguard.scanning.authorization import AuthorizationService
 from qguard.scanning.orchestrator import ScanOrchestrator
-from qguard_scanner.sdk.engine import EngineContext, EngineResult, EngineStatus, ScopeVerdict
+from qguard_scanner.sdk.engine import (
+    EngineContext,
+    EngineResult,
+    EngineStatus,
+    ScopeChecker,
+    ScopeVerdict,
+)
 from qguard_scanner.sdk.finding import ScanTarget
 from qguard_scanner.sdk.registry import get_registry
 from sqlalchemy import select
@@ -184,7 +190,7 @@ async def run_engine(ctx: JobContext) -> dict[str, Any]:
         ),
         config=settings_config,
         workdir=Path(ctx.scratch_dir) if ctx.scratch_dir else None,
-        scope_checker=(lambda _t, _v=verdict: _v)
+        scope_checker=_fixed_scope_checker(verdict)
         if verdict is not None
         else _passive_scope_checker(engine_key),
         progress=report,
@@ -208,6 +214,21 @@ async def run_engine(ctx: JobContext) -> dict[str, Any]:
         project_id=project_id,
         engagement_id=engagement_id,
     )
+
+
+def _fixed_scope_checker(verdict: ScopeVerdict) -> ScopeChecker:
+    """A scope checker that returns one already-made authorization decision.
+
+    The decision is taken once, against the stored authorization, before the
+    engine runs. Returning it unchanged for every target the engine asks about
+    is correct only because the orchestrator has already confirmed the engine
+    is scanning that single authorized target.
+    """
+
+    def check(_target: str) -> ScopeVerdict:
+        return verdict
+
+    return check
 
 
 def _passive_scope_checker(engine_key: str) -> Any:
