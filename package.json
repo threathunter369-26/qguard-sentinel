@@ -1,0 +1,26 @@
+{
+  "name": "qguard-sentinel",
+  "private": true,
+  "version": "1.0.0",
+  "description": "QGuard Sentinel — unified security assessment, pentest, DFIR and incident response platform",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @qguard/web dev",
+    "build": "pnpm --filter @qguard/web build",
+    "start": "pnpm --filter @qguard/web start",
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "test:e2e": "pnpm --filter @qguard/e2e test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.8",
+    "typescript": "^5.6.3"
+  }
+}

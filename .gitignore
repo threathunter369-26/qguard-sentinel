@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+build/
+.turbo/
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
+.pnpm-store/
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+!infrastructure/**/*.example.key
+secrets/
+
+# Platform runtime data (evidence, uploads, artifacts, reports)
+var/
+storage/
+uploads/
+evidence_store/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# Logs
+*.log
+logs/
