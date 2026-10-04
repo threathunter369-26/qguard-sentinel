@@ -107,9 +107,11 @@ class Case(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin, AuthorMixi
         UUIDArray, nullable=False, default=list, server_default="{}"
     )
 
-    evidence_items: Mapped[list[Evidence]] = relationship(back_populates="case", lazy="noload")
+    evidence_items: Mapped[list[Evidence]] = relationship(
+        back_populates="case", lazy="raise_on_sql"
+    )
     notes: Mapped[list[CaseNote]] = relationship(
-        back_populates="case", cascade="all, delete-orphan", lazy="noload"
+        back_populates="case", cascade="all, delete-orphan", lazy="raise_on_sql"
     )
 
     __table_args__ = (
@@ -178,7 +180,7 @@ class CaseNote(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin):
         Boolean, nullable=False, default=True, server_default="true"
     )
 
-    case: Mapped[Case] = relationship(back_populates="notes", lazy="noload")
+    case: Mapped[Case] = relationship(back_populates="notes", lazy="raise_on_sql")
 
     __table_args__ = (Index("ix_case_notes_case_current", "case_id", "is_current"),)
 
@@ -296,9 +298,9 @@ class Evidence(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin):
         ARRAY(String(80)), nullable=False, default=list, server_default="{}"
     )
 
-    case: Mapped[Case | None] = relationship(back_populates="evidence_items", lazy="noload")
+    case: Mapped[Case | None] = relationship(back_populates="evidence_items", lazy="raise_on_sql")
     custody_entries: Mapped[list[ChainOfCustodyEntry]] = relationship(
-        back_populates="evidence", cascade="all, delete-orphan", lazy="noload"
+        back_populates="evidence", cascade="all, delete-orphan", lazy="raise_on_sql"
     )
 
     __table_args__ = (
@@ -354,7 +356,7 @@ class ChainOfCustodyEntry(Base, UUIDPrimaryKeyMixin, OrgScopedMixin):
     prev_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     entry_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
 
-    evidence: Mapped[Evidence] = relationship(back_populates="custody_entries", lazy="noload")
+    evidence: Mapped[Evidence] = relationship(back_populates="custody_entries", lazy="raise_on_sql")
 
     __table_args__ = (
         UniqueConstraint("evidence_id", "sequence", name="uq_chain_of_custody_sequence"),

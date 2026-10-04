@@ -139,13 +139,13 @@ class Incident(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin, Author
     )
 
     tasks: Mapped[list[IncidentTask]] = relationship(
-        back_populates="incident", cascade="all, delete-orphan", lazy="noload"
+        back_populates="incident", cascade="all, delete-orphan", lazy="raise_on_sql"
     )
     updates: Mapped[list[IncidentUpdate]] = relationship(
-        back_populates="incident", cascade="all, delete-orphan", lazy="noload"
+        back_populates="incident", cascade="all, delete-orphan", lazy="raise_on_sql"
     )
     responders: Mapped[list[IncidentResponder]] = relationship(
-        back_populates="incident", cascade="all, delete-orphan", lazy="noload"
+        back_populates="incident", cascade="all, delete-orphan", lazy="raise_on_sql"
     )
 
     __table_args__ = (
@@ -239,7 +239,7 @@ class IncidentTask(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin):
     blocked_reason: Mapped[str | None] = mapped_column(Text)
     order_index: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
 
-    incident: Mapped[Incident] = relationship(back_populates="tasks", lazy="noload")
+    incident: Mapped[Incident] = relationship(back_populates="tasks", lazy="raise_on_sql")
 
     __table_args__ = (
         Index("ix_incident_tasks_incident_status", "incident_id", "status"),
@@ -276,7 +276,7 @@ class IncidentResponder(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixi
     )
     left_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
-    incident: Mapped[Incident] = relationship(back_populates="responders", lazy="noload")
+    incident: Mapped[Incident] = relationship(back_populates="responders", lazy="raise_on_sql")
 
     __table_args__ = (
         UniqueConstraint(
@@ -313,7 +313,7 @@ class IncidentUpdate(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin):
         JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb")
     )
 
-    incident: Mapped[Incident] = relationship(back_populates="updates", lazy="noload")
+    incident: Mapped[Incident] = relationship(back_populates="updates", lazy="raise_on_sql")
 
     __table_args__ = (
         Index("ix_incident_updates_incident_time", "incident_id", "occurred_at"),

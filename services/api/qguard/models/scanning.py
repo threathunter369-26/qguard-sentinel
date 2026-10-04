@@ -307,7 +307,7 @@ class ScanEngineRun(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin):
         ARRAY(Text), nullable=False, default=list, server_default="{}"
     )
 
-    scan: Mapped[Scan] = relationship(back_populates="engine_runs", lazy="noload")
+    scan: Mapped[Scan] = relationship(back_populates="engine_runs", lazy="raise_on_sql")
 
     __table_args__ = (
         Index("ix_scan_engine_runs_scan_engine", "scan_id", "engine_key"),

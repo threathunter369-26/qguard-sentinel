@@ -55,6 +55,8 @@ ignore = [
 # EXPOSED_SECRET, ...), so every hit is the identifier, never a credential.
 "services/api/qguard/models/audit.py" = ["S105"]
 "services/api/qguard/common/enums.py" = ["S105"]
+"services/api/qguard/auth/permissions.py" = ["S105"]
+"services/api/qguard/auth/tokens.py" = ["S105"]
 "services/scanner/qguard_scanner/rules/**" = ["E501"]
 "services/scanner/qguard_scanner/engines/**" = ["S310", "S608"]
 

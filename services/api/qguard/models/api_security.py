@@ -74,7 +74,7 @@ class ApiSpecification(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin
     )
 
     endpoints: Mapped[list[ApiEndpoint]] = relationship(
-        back_populates="specification", cascade="all, delete-orphan", lazy="noload"
+        back_populates="specification", cascade="all, delete-orphan", lazy="raise_on_sql"
     )
 
     __table_args__ = (
@@ -153,7 +153,7 @@ class ApiEndpoint(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin):
     last_tested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     specification: Mapped[ApiSpecification | None] = relationship(
-        back_populates="endpoints", lazy="noload"
+        back_populates="endpoints", lazy="raise_on_sql"
     )
 
     __table_args__ = (

@@ -57,9 +57,11 @@ class Organization(Base, UUIDPrimaryKeyMixin, TimestampMixin, SoftDeleteMixin):
         Integer, nullable=False, default=365, server_default="365"
     )
 
-    users: Mapped[list[User]] = relationship(back_populates="organization", lazy="noload")
-    teams: Mapped[list[Team]] = relationship(back_populates="organization", lazy="noload")
-    projects: Mapped[list[Project]] = relationship(back_populates="organization", lazy="noload")
+    users: Mapped[list[User]] = relationship(back_populates="organization", lazy="raise_on_sql")
+    teams: Mapped[list[Team]] = relationship(back_populates="organization", lazy="raise_on_sql")
+    projects: Mapped[list[Project]] = relationship(
+        back_populates="organization", lazy="raise_on_sql"
+    )
 
     __table_args__ = (
         CheckConstraint("retention_days BETWEEN 1 AND 3650", name="retention_days_range"),
@@ -121,10 +123,15 @@ class User(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin, SoftDelete
         back_populates="users",
         primaryjoin="User.org_id == Organization.id",
         foreign_keys="User.org_id",
-        lazy="noload",
+        lazy="raise_on_sql",
     )
     role_assignments: Mapped[list[UserRole]] = relationship(
-        back_populates="user", cascade="all, delete-orphan", lazy="selectin"
+        back_populates="user",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        # `user_roles` also references `users` through `granted_by`, so the
+        # linking column has to be stated explicitly on both sides.
+        foreign_keys="UserRole.user_id",
     )
 
     __table_args__ = (
@@ -197,7 +204,7 @@ class RolePermission(Base, TimestampMixin):
         ForeignKey("permissions.key", ondelete="CASCADE"), primary_key=True
     )
 
-    role: Mapped[Role] = relationship(back_populates="permissions", lazy="noload")
+    role: Mapped[Role] = relationship(back_populates="permissions", lazy="raise_on_sql")
 
 
 class UserRole(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin):
@@ -223,7 +230,7 @@ class UserRole(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin):
     """Supports time-boxed elevation (for example, break-glass admin access)."""
 
     user: Mapped[User] = relationship(
-        back_populates="role_assignments", foreign_keys=[user_id], lazy="noload"
+        back_populates="role_assignments", foreign_keys=[user_id], lazy="raise_on_sql"
     )
     role: Mapped[Role] = relationship(lazy="selectin")
 
@@ -257,10 +264,10 @@ class Team(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin, SoftDelete
         back_populates="teams",
         primaryjoin="Team.org_id == Organization.id",
         foreign_keys="Team.org_id",
-        lazy="noload",
+        lazy="raise_on_sql",
     )
     members: Mapped[list[TeamMember]] = relationship(
-        back_populates="team", cascade="all, delete-orphan", lazy="noload"
+        back_populates="team", cascade="all, delete-orphan", lazy="raise_on_sql"
     )
 
     __table_args__ = (UniqueConstraint("org_id", "name", name="uq_teams_org_id_name"),)
@@ -279,7 +286,7 @@ class TeamMember(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin):
         String(48), nullable=False, default="member", server_default="'member'"
     )
 
-    team: Mapped[Team] = relationship(back_populates="members", lazy="noload")
+    team: Mapped[Team] = relationship(back_populates="members", lazy="raise_on_sql")
 
     __table_args__ = (
         UniqueConstraint("team_id", "user_id", name="uq_team_members_team_id_user_id"),
@@ -322,10 +329,10 @@ class Project(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin, SoftDel
         back_populates="projects",
         primaryjoin="Project.org_id == Organization.id",
         foreign_keys="Project.org_id",
-        lazy="noload",
+        lazy="raise_on_sql",
     )
     members: Mapped[list[ProjectMember]] = relationship(
-        back_populates="project", cascade="all, delete-orphan", lazy="noload"
+        back_populates="project", cascade="all, delete-orphan", lazy="raise_on_sql"
     )
 
     __table_args__ = (
@@ -347,7 +354,7 @@ class ProjectMember(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin):
         String(48), nullable=False, default="member", server_default="'member'"
     )
 
-    project: Mapped[Project] = relationship(back_populates="members", lazy="noload")
+    project: Mapped[Project] = relationship(back_populates="members", lazy="raise_on_sql")
 
     __table_args__ = (
         UniqueConstraint("project_id", "user_id", name="uq_project_members_project_id_user_id"),

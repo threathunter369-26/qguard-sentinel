@@ -137,7 +137,7 @@ class Asset(
     )
 
     assessments: Mapped[list[AssetAssessment]] = relationship(
-        back_populates="asset", cascade="all, delete-orphan", lazy="noload"
+        back_populates="asset", cascade="all, delete-orphan", lazy="raise_on_sql"
     )
 
     __table_args__ = (
@@ -250,7 +250,7 @@ class AssetAssessment(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin)
         JSONB, nullable=False, default=dict, server_default=text("'{}'::jsonb")
     )
 
-    asset: Mapped[Asset] = relationship(back_populates="assessments", lazy="noload")
+    asset: Mapped[Asset] = relationship(back_populates="assessments", lazy="raise_on_sql")
 
     __table_args__ = (Index("ix_asset_assessments_asset_time", "asset_id", "assessed_at"),)
 

@@ -175,7 +175,7 @@ class Finding(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin):
     """Engine-native payload, retained so an import is never lossy."""
 
     vulnerability: Mapped[Vulnerability | None] = relationship(
-        back_populates="findings", lazy="noload"
+        back_populates="findings", lazy="raise_on_sql"
     )
 
     __table_args__ = (
@@ -317,9 +317,11 @@ class Vulnerability(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixin):
         ARRAY(String(80)), nullable=False, default=list, server_default="{}"
     )
 
-    findings: Mapped[list[Finding]] = relationship(back_populates="vulnerability", lazy="noload")
+    findings: Mapped[list[Finding]] = relationship(
+        back_populates="vulnerability", lazy="raise_on_sql"
+    )
     events: Mapped[list[VulnerabilityEvent]] = relationship(
-        back_populates="vulnerability", cascade="all, delete-orphan", lazy="noload"
+        back_populates="vulnerability", cascade="all, delete-orphan", lazy="raise_on_sql"
     )
 
     __table_args__ = (
@@ -391,7 +393,9 @@ class VulnerabilityEvent(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMix
         DateTime(timezone=True), nullable=False, server_default=func.now(), index=True
     )
 
-    vulnerability: Mapped[Vulnerability] = relationship(back_populates="events", lazy="noload")
+    vulnerability: Mapped[Vulnerability] = relationship(
+        back_populates="events", lazy="raise_on_sql"
+    )
 
     __table_args__ = (
         Index("ix_vulnerability_events_vuln_time", "vulnerability_id", "occurred_at"),

@@ -64,7 +64,7 @@ class ComplianceFramework(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     )
 
     controls: Mapped[list[ComplianceControl]] = relationship(
-        back_populates="framework", cascade="all, delete-orphan", lazy="noload"
+        back_populates="framework", cascade="all, delete-orphan", lazy="raise_on_sql"
     )
 
 
@@ -92,7 +92,9 @@ class ComplianceControl(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     """Whether platform data alone can evidence this control, or human attestation is required."""
     testing_guidance: Mapped[str | None] = mapped_column(Text)
 
-    framework: Mapped[ComplianceFramework] = relationship(back_populates="controls", lazy="noload")
+    framework: Mapped[ComplianceFramework] = relationship(
+        back_populates="controls", lazy="raise_on_sql"
+    )
 
     __table_args__ = (
         UniqueConstraint("framework_id", "control_id", name="uq_compliance_controls_framework_id"),
@@ -199,7 +201,7 @@ class ComplianceAssessment(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampM
     )
 
     control_results: Mapped[list[ControlAssessment]] = relationship(
-        back_populates="assessment", cascade="all, delete-orphan", lazy="noload"
+        back_populates="assessment", cascade="all, delete-orphan", lazy="raise_on_sql"
     )
 
     __table_args__ = (
@@ -259,7 +261,7 @@ class ControlAssessment(Base, UUIDPrimaryKeyMixin, OrgScopedMixin, TimestampMixi
     assessed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     assessment: Mapped[ComplianceAssessment] = relationship(
-        back_populates="control_results", lazy="noload"
+        back_populates="control_results", lazy="raise_on_sql"
     )
 
     __table_args__ = (
