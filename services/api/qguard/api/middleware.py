@@ -228,7 +228,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 bucket=bucket_key.split(":")[0],
                 limit=limit,
             )
-            response = JSONResponse(
+            refusal = JSONResponse(
                 status_code=429,
                 content={
                     "error": {
@@ -240,15 +240,15 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     }
                 },
             )
-            response.headers["Retry-After"] = str(retry_after)
-            response.headers["X-RateLimit-Limit"] = str(limit)
-            response.headers["X-RateLimit-Remaining"] = "0"
-            return response
+            refusal.headers["Retry-After"] = str(retry_after)
+            refusal.headers["X-RateLimit-Limit"] = str(limit)
+            refusal.headers["X-RateLimit-Remaining"] = "0"
+            return refusal
 
         bucket.append(now)
-        passthrough: Response = await call_next(request)
-        passthrough.headers["X-RateLimit-Limit"] = str(limit)
-        passthrough.headers["X-RateLimit-Remaining"] = str(max(0, limit - len(bucket)))
+        response: Response = await call_next(request)
+        response.headers["X-RateLimit-Limit"] = str(limit)
+        response.headers["X-RateLimit-Remaining"] = str(max(0, limit - len(bucket)))
 
         # Keep the dictionary from growing without bound on a long-lived process.
         if len(self._hits) > 20_000:

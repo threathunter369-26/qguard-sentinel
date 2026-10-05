@@ -185,6 +185,30 @@ def require_mfa(principal: CurrentPrincipal) -> Principal:
 MfaVerified = Annotated[Principal, Depends(require_mfa)]
 
 
+def current_org_id(principal: CurrentPrincipal) -> uuid.UUID:
+    """The caller's organization, required.
+
+    Almost every resource in the platform is organization-scoped, so almost
+    every endpoint needs this. Supplied as a dependency rather than re-derived
+    per router: one definition means one error message, and a router cannot
+    forget the check and accidentally query across tenants.
+
+    A principal without an organization is a platform-level caller — the
+    bootstrap path, or a token that has not selected one — and such a caller
+    has no tenant-scoped data to read.
+    """
+    if principal.org_id is None:
+        raise PermissionDeniedError(
+            "This endpoint operates on organization-scoped data, and this caller is not "
+            "acting within an organization.",
+            code="organization_context_required",
+        )
+    return principal.org_id
+
+
+OrgId = Annotated[uuid.UUID, Depends(current_org_id)]
+
+
 async def resolve_project_id(
     principal: CurrentPrincipal,
     project_id: uuid.UUID | None = None,
